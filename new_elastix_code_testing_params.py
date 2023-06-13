@@ -20,7 +20,9 @@ import nibabel as nib
 
 age = "P28"
 
-working_path = "C:/Users/ingvieb/Elastix_testing/" + age + "//"
+working_path = r"D:\elastix_testing\\" + age + "_beta//"
+current_test_path = working_path + "run_with_curated_points//"
+testname = "_curated_points"
 
 # give the paths of the volumes to be used as fixedImage and movingImage. in this case, the CCFvolume will be the moving and the DeMBA volume will be the fixed.
 CCFVolume = working_path + "average_template_10_adjusted.nii.gz"
@@ -35,12 +37,13 @@ movingSegmentation = working_path + "annotation_10_adjusted.nii.gz"
 
 # set names for the resulting template and segmentation files
 
-resultTemplateName = working_path + age + '_result_template.nii'
-resultSegmentationName = working_path + age + "_result_segmentation.nii"
+resultTemplateName = current_test_path + age + '_result_template' + testname + '.nii'
+resultSegmentationName = current_test_path + age + "_result_segmentation" + testname + ".nii"
 
 # give the path of files with corresponding points in the fixedImage and movingImage. these will be considered during the registration
-fixedPoints = working_path + age + "_points_empty.pts"
-movingPoints = working_path + "adult_points_empty.pts"
+
+fixedPoints = current_test_path + age + testname + ".pts"
+movingPoints = current_test_path + "adult" + testname + ".pts"
 
 
 
@@ -54,8 +57,9 @@ movingPoints = working_path + "adult_points_empty.pts"
 # AFFINE TRANSFORM PARAMETERS
 
 p_t = sitk.GetDefaultParameterMap('translation') 
-p_t['Registration'] = ['MultiMetricMultiResolutionRegistration']
 
+#p_t['Registration'] = ['MultiMetricMultiResolutionRegistration']
+p_t['Registration'] = ['MultiResolutionRegistration']
 
 # AFFINE TRANSFORM PARAMETERS
 
@@ -69,7 +73,9 @@ p_a['MovingImageDimension'] = ['3']
 
 
 #Components
-p_a['Registration'] = ['MultiMetricMultiResolutionRegistration']
+#p_a['Registration'] = ['MultiMetricMultiResolutionRegistration']
+p_a['Registration'] = ['MultiResolutionRegistration']
+
 p_a['FixedImagePyramid'] = ['FixedSmoothingImagePyramid']
 p_a['MovingImagePyramid'] = ['MovingSmoothingImagePyramid']
 p_a['Interpolator'] = ['BSplineInterpolator']
@@ -145,7 +151,7 @@ p_b['Optimizer'] = ['AdaptiveStochasticGradientDescent']
 
 # The Transform and Metric are important and need to be chosen careful for each application. See manual.
 p_b['Transform'] = ['BSplineTransform']
-p_b['Metric'] = ['AdvancedMattesMutualInformation']
+p_b['Metric'] = ['AdvancedMattesMutualInformation',"CorrespondingPointsEuclideanDistanceMetric"]
 
 
 # If you do not use a mask, the option doesn't matter.
@@ -218,6 +224,21 @@ p_b['FinalBSplineInterpolationOrder'] = ['3']
 #Default pixel value for pixels that come from outside the picture
 p_b['DefaultPixelValue'] = ['0']
 
+"""
+Increase the weight of Metric0 by 10x relative to the point based reg
+p_t['Metric0Weight'] = ['10.0']
+p_a['Metric0Weight'] = ['10.0']
+p_b['Metric0Weight'] = ['10.0']
+"""
+
+# p_t['UseRelativeWeights'] = ['true']
+# p_t['Metric0Weight'] = ['10.0']
+
+# p_a['UseRelativeWeights'] = ['true']
+# p_a['Metric0Weight'] = ['10.0']
+
+p_b['UseRelativeWeights'] = ['true']
+p_b['Metric0Weight'] = ['5.0']
 
 
 ### APPLY TRANSFORMS
@@ -226,6 +247,8 @@ elastixImageFilter = sitk.ElastixImageFilter()
 elastixImageFilter.LogToFileOn()
 elastixImageFilter.SetFixedImage(fixedImage)
 elastixImageFilter.SetMovingImage(movingImage)
+
+
 
 
 # leave out if no parameterMap is specified
@@ -238,7 +261,7 @@ elastixImageFilter.RemoveParameter('FinalGridSpacingInPhysicalUnits')
 
 elastixImageFilter.SetFixedPointSetFileName(fixedPoints)
 elastixImageFilter.SetMovingPointSetFileName(movingPoints)
-elastixImageFilter.AddParameter("Metric", "CorrespondingPointsEuclideanDistanceMetric")
+#elastixImageFilter.AddParameter("Metric", "CorrespondingPointsEuclideanDistanceMetric")
 
 print("Executing elastix transformation...")
 # execute the transformation
