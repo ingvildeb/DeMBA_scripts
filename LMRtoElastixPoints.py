@@ -9,15 +9,17 @@ import json
 
 age = "P28"
 
-mypath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Merging\LMReg_transformation\\"
+mypath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\LMR_registrationData\\"
 
-filename = "2023-04-04_LMR-registration_" + age + ".txt"
+filename = "2023-09-06_LMR-curated-points_" + age + ".txt"
 
 with open(mypath + filename) as file:
     openFile = json.load(file)
+try:
+    xyz_list = [(i["px"], i["py"], i["pz"]) for i in openFile]
+except KeyError:
+    raise Exception("you didnt set all the target points in LMR dummy")
     
-xyz_list = [(i["px"], i["py"], i["pz"]) for i in openFile]
-
 with open(mypath + age + '_points.pts', 'w') as f:
     f.write("index")
     f.write('\n')    
