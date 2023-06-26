@@ -21,8 +21,8 @@ import nibabel as nib
 age = "P28"
 
 working_path = r"D:\elastix_testing\\" + age + "_beta//"
-current_test_path = working_path + "run_with_curated_points//"
-testname = "_curated_points"
+current_test_path = working_path + "add_nerve//"
+testname = "_add_nerve"
 
 # give the paths of the volumes to be used as fixedImage and movingImage. in this case, the CCFvolume will be the moving and the DeMBA volume will be the fixed.
 CCFVolume = working_path + "average_template_10_adjusted.nii.gz"
@@ -224,18 +224,6 @@ p_b['FinalBSplineInterpolationOrder'] = ['3']
 #Default pixel value for pixels that come from outside the picture
 p_b['DefaultPixelValue'] = ['0']
 
-"""
-Increase the weight of Metric0 by 10x relative to the point based reg
-p_t['Metric0Weight'] = ['10.0']
-p_a['Metric0Weight'] = ['10.0']
-p_b['Metric0Weight'] = ['10.0']
-"""
-
-# p_t['UseRelativeWeights'] = ['true']
-# p_t['Metric0Weight'] = ['10.0']
-
-# p_a['UseRelativeWeights'] = ['true']
-# p_a['Metric0Weight'] = ['10.0']
 
 p_b['UseRelativeWeights'] = ['true']
 p_b['Metric0Weight'] = ['5.0']
