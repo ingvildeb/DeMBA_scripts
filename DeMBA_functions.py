@@ -10,6 +10,8 @@ import numpy as np
 import nibabel as nib
 import json
 import os 
+from tkinter import *  
+
 
 def LMRtoElastixPoints(filepath, fixedAge, movingAge):
     
@@ -53,8 +55,8 @@ def LMRtoElastixPoints(filepath, fixedAge, movingAge):
 
 
 
-def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName):
-    
+def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName, 
+                 numberOfIterations_a = "500", numberOfIterations_b = "5000"):
     
     # elastix read fixed and moving images
     fixedImage = sitk.ReadImage(fixedImage)
@@ -107,7 +109,8 @@ def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegme
     
     p_a['WriteTransformParametersEachIteration'] = ['false']
     
-    p_a['MaximumNumberOfIterations'] = ['500']
+    p_a['MaximumNumberOfIterations'] = [numberOfIterations_a]
+    #p_a['MaximumNumberOfIterations'] = ['500']
     
     p_a['NumberOfHistogramBins'] = ['32']
     p_a['FixedLimitRangeRatio'] = ['0.0']
@@ -191,7 +194,7 @@ def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegme
     
     # Maximum number of iterations in each resolution level. Maximum number of iterations in each resolution level: 200-2000 works usually fine for nonrigid registration. 
     # The more, the better, but the longer computation time. This is an important parameter!
-    p_b['MaximumNumberOfIterations'] = ['5000']
+    p_b['MaximumNumberOfIterations'] = [numberOfIterations_b]
     
     # Number of grey level bins in each resolution level, for the mutual information. 16 or 32 usually works fine. You could also employ a hierarchical strategy:(NumberOfHistogramBins 16 32 64)
     p_b['NumberOfHistogramBins'] = ['32']
@@ -291,12 +294,18 @@ def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegme
     transformixImageFilter.Execute()
     outvolume = transformixImageFilter.GetResultImage()
     sitk.WriteImage(outvolume, resultSegmentationName)
+    print("FINISHED PROCESSING :D :D")
+
     
     
-fixedImage = r"D:\elastix_testing\P28_beta\function_test\P28_DeMBA_template.nii.gz"
-movingImage = r"D:\elastix_testing\P28_beta\function_test\average_template_10_adjusted.nii.gz"
-fixedPoints = r"D:\elastix_testing\P28_beta\function_test\P28_points.pts"
-movingPoints = r"D:\elastix_testing\P28_beta\function_test\adult_points.pts"
-movingSegmentation = r"D:\elastix_testing\P28_beta\function_test\annotation_10_adjusted.nii.gz"
-resultTemplateName = r"D:\elastix_testing\P28_beta\function_test\resultTemplate"
-resultSegmentationName = r"D:\elastix_testing\P28_beta\function_test\resultSegmentation"
+    
+# fixedImage = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\P28_DeMBA_template.nii.gz"
+# movingImage = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\average_template_10_adjusted.nii.gz"
+# fixedPoints = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\P28_curated_points.pts"
+# movingPoints = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\adult_curated_points.pts"
+# movingSegmentation = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\annotation_10_adjusted.nii.gz"
+# resultTemplateName = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\resultTemplate.nii"
+# resultSegmentationName = r"C:\Users\ingvieb\Elastix_testing\P28\test_function\resultSegmentation.nii"
+
+
+#runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName)
