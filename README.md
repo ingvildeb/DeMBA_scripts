@@ -22,3 +22,7 @@
  This repository contains all the code used in the DeMBA project.
  - **DeMBA_functions.py** This script contains the functions used for elastix transformation.
  - **DeMBA_runs.py** This script was used to run transformations in the project. It allows you to run transformations specified fixed and moving volumes and copies all resulting files to a unique run directory, making it easy to keep an overview of different runs and results.
+ - **make_thumbnail_flythrough.py** This script creates a flythrough video of a volume file, suitable for use as a preview image on the EBRAINS Knowledge Graph.
+
+ # Useful tips
+ - We use the SimpleITK package for elastix. Be aware that there is another package called simpleITK. To make sure you import the right package, first pip install SimpleITK-SimpleElastix.
