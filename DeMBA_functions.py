@@ -123,17 +123,19 @@ def runTransform(fixedAge, fixedImage, movingImage, fixedPoints, movingPoints, m
     transformixImageFilter = sitk.TransformixImageFilter()
     transformixImageFilter.ComputeDeformationFieldOn()
     transformixImageFilter.SetTransformParameterMap(transformParameterMap)
-    transformixImageFilter.SetMovingImage(sitk.ReadImage(movingSegmentation))
-    transformixImageFilter.Execute()
     
-    sitk.WriteImage(transformixImageFilter.GetResultImage(), resultSegmentationName)
+    for mSeg, rSegName in zip(movingSegmentation, resultSegmentationName):
+        transformixImageFilter.SetMovingImage(sitk.ReadImage(mSeg))
+        transformixImageFilter.Execute()
+        sitk.WriteImage(transformixImageFilter.GetResultImage(), rSegName)
+        print(f"Finished processing {mSeg}")
     
     # save the deformation field
     deformationField = transformixImageFilter.GetDeformationField()
     sitk.WriteImage(deformationField, deformationName) 
     
     
-    print("FINISHED PROCESSING :D :D")
+    print("Finished all processing")
 
     
     
