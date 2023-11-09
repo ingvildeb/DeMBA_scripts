@@ -68,7 +68,7 @@ def createParameterMap(file, regType):
     return pMap
 
 
-def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName, deformationName):
+def runTransform(fixedAge, fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName, deformationName):
     
     # elastix read fixed and moving images
     fixedImage = sitk.ReadImage(fixedImage)
@@ -81,9 +81,9 @@ def runTransform(fixedImage, movingImage, fixedPoints, movingPoints, movingSegme
     
     # define the transformation maps
     
-    p_t = createParameterMap('parameter_jsons/param_dict_t.json', "translation")
-    p_a = createParameterMap('parameter_jsons/param_dict_a.json', "affine")
-    p_b = createParameterMap('parameter_jsons/param_dict_b.json', "bspline")
+    p_t = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_t.json", "translation")
+    p_a = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_a.json", "affine")
+    p_b = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_b.json", "bspline")
     
     parameterMapVector = sitk.VectorOfParameterMap()
     parameterMapVector.append(p_t)
