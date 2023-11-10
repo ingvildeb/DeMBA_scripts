@@ -1,6 +1,6 @@
 # Project overview
  The DeMBA project aims to create 3D atlases of the postnatal mouse brain that are compatible with the Allen Mouse brain Common Coordinate Framework (Allen CCF) delineations.
- To do this, we perform 3D-to-3D registration of the Allen CCF template to templates of developing mouse brains (P7, P14, P21 and P35) acquired by serial two photon microscopy and published by [Newmaster and colleagues](https://www.nature.com/articles/s41467-020-15659-1).
+ To do this, we perform 3D-to-3D registration of the Allen CCF template to templates of developing mouse brains (P7, P14, P21 and P28) acquired by serial two photon microscopy and published by [Newmaster and colleagues](https://www.nature.com/articles/s41467-020-15659-1).
  The deformation of the templates is subsequently used to transform the delineations in the same way, providing Allen CCF delineations in the template space for each age group.
 
 # Data availability
