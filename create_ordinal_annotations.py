@@ -9,24 +9,26 @@ from tqdm import tqdm
 import numpy as np
 import json
 
-base_path = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\Volumes_for_elastix\\"
+base_path = r"Z:/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/Volumes_for_elastix/"
+base_vol_path = r"Z:/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/Volumes_warped/"
+
 years = [2017, 2022]
 
-for year in years:
-    vol_path = rf"{base_path}/annotation_10_{year}_reoriented.nii.gz"
+for year in years[1:]:
+    vol_path = rf"{base_vol_path}/annotation_10_{year}_reoriented_warp_ordinal.nii.gz"
     vol = nib.load(vol_path)
     vol_data = vol.get_fdata()
-    ids = np.unique(vol_data)
-    ordinal_ids = np.arange(len(ids))
-    id_map = {i:oid for i,oid in zip(ids, ordinal_ids)}
-    with open(f"{base_path}/{year}_lookup.json") as out_json:
-        json.dump(id_map, out_json)
+
+    with open(rf"{base_path}/{year}_lookup.json", 'r') as in_json:
+        id_map = json.load(in_json)
     
     out_volume = np.zeros(vol_data.shape)
-    for i, oid in tqdm(id_map.values()):
-        out_volume[vol_data == i] = oid
+    for i, oid in tqdm(id_map.items()):
+        out_volume[vol_data == oid] = i
         
-    out_img = nib.Nifti1Image(out_volume, vol_data.affine, vol_data.header)
-    out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented.nii.gz"
+    out_img = nib.Nifti1Image(out_volume, vol.affine, vol.header)
+    out_filename = rf"{base_vol_path}/annotation_10_{year}_reoriented_warp_original_id.nii.gz"
     nib.save(out_img, out_filename)
         
+
+
