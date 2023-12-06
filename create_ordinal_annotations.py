@@ -22,11 +22,12 @@ for year in years:
     with open(rf"{base_path}/{year}_lookup.json", 'w') as out_json:
         json.dump(id_map, out_json)
     
-    out_volume = np.zeros(vol_data.shape)
+    out_volume = np.zeros(vol_data.shape).astype(int)
     for i, oid in tqdm(id_map.items()):
-        out_volume[vol_data == i] = oid
-        
+        out_volume[vol_data == i] = int(oid)
+    
     out_img = nib.Nifti1Image(out_volume, vol.affine, vol.header)
-    out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented.nii.gz"
+    out_img.set_data_dtype(np.uint32)
+    out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented_int.nii"
     nib.save(out_img, out_filename)
         
