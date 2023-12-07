@@ -5,19 +5,21 @@ Created on Mon Oct 30 14:27:23 2023
 @author: ingvieb
 """
 
+
 from glob import glob
 import shutil
 import os
 import datetime
 import DeMBA_functions as dfs
 
-path = r"C:\Users\ingvieb\elastix_testing\reoriented_data//"
+path = r"C:\Users\ingvieb\elastix_testing\ordinal_ids//"
 fixedAge = "P7"
+movingAge = "P14"
 # give the paths of the volumes to be used as fixedImage and movingImage. in this case, the CCFvolume will be the moving and the DeMBA volume will be the fixed.
 
-movingImage = f"{path}/{fixedAge}/DeMBA_P14_brain.nii"
-movingSegmentation = [f"{path}/{fixedAge}/P14_resultSegmentation_2017.nii", f"{path}/{fixedAge}/P14_resultSegmentation_2022.nii"]
-fixedImage = f"{path}/{fixedAge}/DeMBA_{fixedAge}_brain.nii"
+movingImage = f"{path}/{fixedAge}/DeMBA_{movingAge}_brain.nii.gz"
+movingSegmentation = [f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2017.nii.gz", f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2022.nii.gz"]
+fixedImage = f"{path}/{fixedAge}/DeMBA_{fixedAge}_brain.nii.gz"
 fixedPoints = f"{path}/{fixedAge}/fixed.pts"
 movingPoints = f"{path}/{fixedAge}/moving.pts"
 
@@ -27,9 +29,9 @@ numberofruns = len(glob(fr"{runsdir}/*"))
 fullrunsdir = fr"{runsdir}run{numberofruns}/"
 os.mkdir(fullrunsdir)
 
-resultTemplateName = f"{fullrunsdir}/resultTemplate.nii"
-resultSegmentationName = [f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii", f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii"]
-deformationName = f"{fullrunsdir}/deformationField.nii"
+resultTemplateName = f"{fullrunsdir}/resultTemplate.nii.gz"
+resultSegmentationName = [f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii.gz", f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii.gz"]
+deformationName = f"{fullrunsdir}/deformationField.nii.gz"
 
 # add th4 time stamp 
 time = datetime.datetime.now()
@@ -39,7 +41,7 @@ time = time.strftime("%d-%m-%Y %H:%M:%S")
 # format
 message = f"""
 {time} \n
-Running P14 - P7 with the volumes that have correct IDs.
+Running transformation of {movingAge} to {fixedAge}.
 
 """
 # write to file
@@ -49,6 +51,7 @@ with open(f"{fullrunsdir}notes.txt", "w") as f:
 
 
 dfs.runTransform(fixedAge, fixedImage, movingImage, fixedPoints, movingPoints, movingSegmentation, resultTemplateName, resultSegmentationName, deformationName)
+
 
     
 shutil.copy(fixedPoints, f"{fullrunsdir}fixed.pts")
@@ -61,5 +64,5 @@ shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_t.json", f"{fullrunsdir}para
 shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_a.json", f"{fullrunsdir}param_dict_a.json")
 shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_b.json", f"{fullrunsdir}param_dict_b.json")
 shutil.copy("DeMBA_runs.py", f"{fullrunsdir}script.py")
-shutil.copy(movingImage, f"{fullrunsdir}movingImage.nii")
-shutil.copy(fixedImage, f"{fullrunsdir}fixedImage.nii")
+shutil.copy(movingImage, f"{fullrunsdir}movingImage.nii.gz")
+shutil.copy(fixedImage, f"{fullrunsdir}fixedImage.nii.gz")
