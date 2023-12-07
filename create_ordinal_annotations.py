@@ -28,6 +28,6 @@ for year in years:
     
     out_img = nib.Nifti1Image(out_volume, vol.affine, vol.header)
     out_img.set_data_dtype(np.uint32)
-    out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented_int.nii"
+    out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented_int.nii.gz"
     nib.save(out_img, out_filename)
         

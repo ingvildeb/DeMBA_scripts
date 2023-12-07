@@ -15,7 +15,7 @@ base_vol_path = r"C:\Users\ingvieb\elastix_testing\ordinal_ids\P7\runs\run1/"
 years = [2017, 2022]
 
 for year in years[:]:
-    vol_path = rf"{base_vol_path}/P7_resultSegmentation_{year}.nii"
+    vol_path = rf"{base_vol_path}/P7_resultSegmentation_{year}.nii.gz"
     vol = nib.load(vol_path)
     vol_data = vol.get_fdata()
     vol_data = vol_data.astype(int)
