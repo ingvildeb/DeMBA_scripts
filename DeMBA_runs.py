@@ -13,8 +13,8 @@ import datetime
 import DeMBA_functions as dfs
 
 path = r"C:\Users\ingvieb\elastix_testing\ordinal_ids//"
-fixedAge = "P7"
-movingAge = "P14"
+fixedAge = "P21"
+movingAge = "P28"
 # give the paths of the volumes to be used as fixedImage and movingImage. in this case, the CCFvolume will be the moving and the DeMBA volume will be the fixed.
 
 movingImage = f"{path}/{fixedAge}/DeMBA_{movingAge}_brain.nii.gz"
