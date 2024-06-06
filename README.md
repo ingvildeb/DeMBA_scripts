@@ -32,7 +32,7 @@
  - **download_original_allen_data.py** This script can be used to download the template and label files from the Allen Institute used in the current project.
  - **reorient_original_allen_data.py** This scripts reorients the Allen data to be in the same orientation as the DeMBA volumes, which is crucial for the use of corresponding points in the registration.
  - **download_reoriented_dev_templates.py** This script can be used to dowload the DeMBA templates from the EBRAINS Knowledge Graph.
- - 
+   
  ### elastix_transformation
  - **DeMBA_functions.py** This script contains the functions used for elastix transformation.
  - **DeMBA_runs.py** This script was used to run transformations in the project. It allows you to run transformations specified fixed and moving volumes and copies all resulting files to a unique run directory, making it easy to keep an overview of different runs and results.
