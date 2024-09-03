@@ -1,3 +1,5 @@
+"""this script should only be run after you have run the 
+allen downloader script"""
 import nrrd
 import nibabel as nib
 import numpy as np
