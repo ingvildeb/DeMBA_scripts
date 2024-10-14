@@ -8,8 +8,8 @@ import pandas as pd
 from tqdm import tqdm
 
 key_ages = [56, 28, 21, 14, 7, 4]
-points_dataset_h = pd.read_excel(r"demo_data/DeMBA_landmarksValidation_Heidi.xlsx")
-points_dataset_i = pd.read_excel(r"demo_data/DeMBA_landmarksValidation_Ingvild.xlsx")
+points_dataset_h = pd.read_excel(r"../demo_data/DeMBA_landmarksValidation_Heidi.xlsx")
+points_dataset_i = pd.read_excel(r"../demo_data/DeMBA_landmarksValidation_Ingvild.xlsx")
 
 
 target_space = "demba_dev_mouse"
