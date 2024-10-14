@@ -4,7 +4,7 @@ import nrrd
 import nibabel as nib
 import numpy as np
 from glob import glob 
-import matplotlib.pyplot as plt
+
 header = {
     "xyzt_units": "microns",
     "spacings": np.array([0.01, 0.01, 0.01]),

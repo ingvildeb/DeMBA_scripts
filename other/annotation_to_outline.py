@@ -1,9 +1,7 @@
 import nibabel as nib
 from glob import glob 
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.ndimage import binary_erosion
-
 from tqdm import tqdm
 anno_path = r"/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v2/interpolated_segmentations/AllenCCFv3_segmentations/20um/"
 files = glob(f"{anno_path}/2022/*")

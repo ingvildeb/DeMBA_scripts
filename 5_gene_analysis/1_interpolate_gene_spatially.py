@@ -5,7 +5,6 @@ import cv2
 from utils.generate_target_slice import generate_target_slice, generate_target_coordinates
 import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 from utils.deform_utils import triangulate, transform_vec
 import nibabel as nib
 from utils.NearestNDInterpolator import NearestNDInterpolator

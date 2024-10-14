@@ -1,0 +1,12 @@
+nibabel
+ccf-translator
+tqdm
+glob
+opencv-python
+brainglobe_atlasapi
+scipy
+pynrrd
+numpy
+SimpleITK-SimpleElastix
+matplotlib
+pandas
