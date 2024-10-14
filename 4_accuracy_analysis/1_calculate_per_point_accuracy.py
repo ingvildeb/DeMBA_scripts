@@ -8,9 +8,8 @@ import pandas as pd
 from tqdm import tqdm
 
 key_ages = [56, 28, 21, 14, 7, 4]
-points_dataset_h = pd.read_excel(r"../demo_data/DeMBA_landmarksValidation_Heidi.xlsx")
-points_dataset_i = pd.read_excel(r"../demo_data/DeMBA_landmarksValidation_Ingvild.xlsx")
-
+points_dataset_h = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Heidi.xlsx")
+points_dataset_i = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Ingvild.xlsx")
 
 target_space = "demba_dev_mouse"
 
@@ -133,7 +132,7 @@ for m in ["iterative", "individual"]:
             "Demba y": dy,
             "Demba z": dz,
         }
-        pd.DataFrame(output_data).to_csv(f"demo_data/{m}_{name_younger_age}.csv")
+        pd.DataFrame(output_data).to_csv(f"../data_files/{m}_{name_younger_age}.csv")
         mean_older_points = np.array(new_mean_older_points)
 
         print(f"ingvild to heidi median: {np.nanmedian(i2h)}")
