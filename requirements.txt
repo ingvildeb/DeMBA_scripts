@@ -1,7 +1,6 @@
 nibabel
 ccf-translator
 tqdm
-glob
 opencv-python
 brainglobe_atlasapi
 scipy
@@ -10,3 +9,4 @@ numpy
 SimpleITK-SimpleElastix
 matplotlib
 pandas
+openpyxl
