@@ -12,7 +12,7 @@ import pandas as pd
 
 ##Graphing with CCFv3 data
 
-dataPath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\Allen_Dev_ISH\nutil\LoadSummary_CCFv3-2017.xlsx"
+dataPath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\Allen_Dev_ISH\nutil-v2\LoadSummary_CCFv3-2017.xlsx"
 
 data = pd.read_excel(dataPath)
 data = pd.DataFrame(data)
@@ -45,7 +45,7 @@ plt.savefig("Load_CCFv3.svg")
 
 ##Graphing with KimLabDevCCFv001 data
 
-dataPath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\Allen_Dev_ISH\nutil\LoadSummary_KimLabDevCCFv001.xlsx"
+dataPath = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\01_Data\Allen_Dev_ISH\nutil-v2\LoadSummary_KimLabDevCCFv001.xlsx"
 
 data = pd.read_excel(dataPath)
 data = pd.DataFrame(data)
