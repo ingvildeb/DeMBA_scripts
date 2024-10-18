@@ -18,16 +18,15 @@ for year in years:
     vol_data = vol.get_fdata()
     ids = np.unique(vol_data)
     ordinal_ids = np.arange(len(ids))
-    id_map = {int(i):int(oid) for i,oid in zip(ids, ordinal_ids)}
-    with open(rf"{base_path}/{year}_lookup.json", 'w') as out_json:
+    id_map = {int(i): int(oid) for i, oid in zip(ids, ordinal_ids)}
+    with open(rf"{base_path}/{year}_lookup.json", "w") as out_json:
         json.dump(id_map, out_json)
-    
+
     out_volume = np.zeros(vol_data.shape).astype(int)
     for i, oid in tqdm(id_map.items()):
         out_volume[vol_data == i] = int(oid)
-    
+
     out_img = nib.Nifti1Image(out_volume, vol.affine, vol.header)
     out_img.set_data_dtype(np.uint32)
     out_filename = rf"{base_path}/ordinal_annotation_10_{year}_reoriented_int.nii.gz"
     nib.save(out_img, out_filename)
-        

@@ -7,21 +7,21 @@ from tqdm import tqdm
 
 key_ages = [56, 28, 21, 14, 7, 4]
 points_dataset_h = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Heidi.xlsx")
-points_dataset_i = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Ingvild.xlsx")
+points_dataset_i = pd.read_excel(
+    r"../data_files/DeMBA_landmarksValidation_Ingvild.xlsx"
+)
 points_dataset_s = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Simon.xlsx")
 
 target_space = "demba_dev_mouse"
 
 col_format = "{}: {} ({} sections)"
 
+
 def format_column_name(age_name, axis):
-    axis_mapping = {
-        "x": "sagittal",
-        "y": "horizontal",
-        "z": "coronal"
-    }
+    axis_mapping = {"x": "sagittal", "y": "horizontal", "z": "coronal"}
     axis_name = axis_mapping.get(axis, "unknown")
     return f"{age_name}: {axis} ({axis_name} sections)"
+
 
 def extract_points_from_df(dataset, age_name):
     return dataset[
@@ -31,6 +31,7 @@ def extract_points_from_df(dataset, age_name):
             format_column_name(age_name, "z"),
         ]
     ].values
+
 
 def one_vs_rest(one_point, rest):
     rest_point = np.mean(rest, axis=0)
@@ -51,11 +52,17 @@ for m in ["iterative", "individual"]:
 
         name_younger_age = f"P{str(younger_age).zfill(2)}"
         older_points_heidi = extract_points_from_df(points_dataset_h, name_older_age)
-        younger_points_heidi = extract_points_from_df(points_dataset_h, name_younger_age)
+        younger_points_heidi = extract_points_from_df(
+            points_dataset_h, name_younger_age
+        )
         older_points_ingvild = extract_points_from_df(points_dataset_i, name_older_age)
-        younger_points_ingvild = extract_points_from_df(points_dataset_i, name_younger_age)
+        younger_points_ingvild = extract_points_from_df(
+            points_dataset_i, name_younger_age
+        )
         older_points_simon = extract_points_from_df(points_dataset_s, name_older_age)
-        younger_points_simon = extract_points_from_df(points_dataset_s, name_younger_age)        
+        younger_points_simon = extract_points_from_df(
+            points_dataset_s, name_younger_age
+        )
 
         if mean_older_points is None or m == "individual":
             mean_older_points = np.mean(
@@ -70,7 +77,20 @@ for m in ["iterative", "individual"]:
         points.transform(target_age=younger_age, target_space=target_space)
         ing, sim, hei, dem = [], [], [], []
         s2i, s2d, s2h, i2h, i2d, h2d = [], [], [], [], [], []
-        hx, hy, hz, ix, iy, iz, dx, dy, dz, sx, sy, sz = [], [], [], [], [], [], [], [], [], [], [], []
+        hx, hy, hz, ix, iy, iz, dx, dy, dz, sx, sy, sz = (
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
         new_mean_older_points = []
         for i in range(len(mean_older_points)):
             if np.isnan(mean_older_points[i]).any():
@@ -110,8 +130,8 @@ for m in ["iterative", "individual"]:
             d1_dist = one_vs_rest(pred_point, [simon_point, ingvild_point])
             d2_dist = one_vs_rest(pred_point, [heidi_point, ingvild_point])
             d3_dist = one_vs_rest(pred_point, [heidi_point, simon_point])
-            #i want to make sure im comparing averages formed from only 2 individiuals
-            d_dist = np.mean([d1_dist,d3_dist,d3_dist])
+            # i want to make sure im comparing averages formed from only 2 individiuals
+            d_dist = np.mean([d1_dist, d3_dist, d3_dist])
             h_i_dist = abs(np.linalg.norm(heidi_point - ingvild_point))
             d_i_dist = abs(np.linalg.norm(pred_point - ingvild_point))
             d_h_dist = abs(np.linalg.norm(pred_point - heidi_point))
@@ -143,7 +163,6 @@ for m in ["iterative", "individual"]:
             sy.append(simon_point[1])
             sz.append(simon_point[2])
 
-
             # d2a.append(d_a_dist)
         output_data = {
             "Acronym": points_dataset_h["Acronym"],
@@ -166,7 +185,7 @@ for m in ["iterative", "individual"]:
             "Ingvild z": iz,
             "Demba x": dx,
             "Demba y": dy,
-            "Demba z": dz,            
+            "Demba z": dz,
             "Simon x": sx,
             "Simon y": sy,
             "Simon z": sz,

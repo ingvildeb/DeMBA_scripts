@@ -13,23 +13,20 @@ import SimpleITK as sitk
 import numpy as np
 import nibabel as nib
 import json
-import os 
-
-
+import os
 
 
 def createParameterMap(file, regType):
-    
-    with open(file, 'r') as f:
+
+    with open(file, "r") as f:
         param_dict = json.load(f)
-    
-    pMap = sitk.GetDefaultParameterMap(regType) 
-        
+
+    pMap = sitk.GetDefaultParameterMap(regType)
+
     for key, value in param_dict.items():
         pMap[key] = value
-    
-    return pMap
 
+    return pMap
 
 
 path = r"C:\Users\ingvieb\elastix//"
@@ -40,40 +37,41 @@ movingAge = "P56"
 movingImagePath = f"{path}/{fixedAge}/DeMBA_{movingAge}_brain.nii.gz"
 
 
-movingSegmentation = [f"{path}/{fixedAge}/DeMBA_{movingAge}_resultSegmentation_2017.nii.gz", 
-                      f"{path}/{fixedAge}/DeMBA_{movingAge}_resultSegmentation_2022.nii.gz",
-                      ]
+movingSegmentation = [
+    f"{path}/{fixedAge}/DeMBA_{movingAge}_resultSegmentation_2017.nii.gz",
+    f"{path}/{fixedAge}/DeMBA_{movingAge}_resultSegmentation_2022.nii.gz",
+]
 fixedImagePath = f"{path}/{fixedAge}/DeMBA_{fixedAge}_brain.nii.gz"
 
 
-
-runsdir = fr"{path}/{fixedAge}/runs/"
-numberofruns = len(glob(fr"{runsdir}/*"))
-fullrunsdir = fr"{runsdir}run{numberofruns}/"
+runsdir = rf"{path}/{fixedAge}/runs/"
+numberofruns = len(glob(rf"{runsdir}/*"))
+fullrunsdir = rf"{runsdir}run{numberofruns}/"
 os.makedirs(fullrunsdir, exist_ok=True)
 
 resultTemplateName = f"{fullrunsdir}/DeMBA_{fixedAge}_result_brain.nii.gz"
-resultSegmentationName = [f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii.gz", 
-                          f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii.gz",
-                          ]
-
-
+resultSegmentationName = [
+    f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii.gz",
+    f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii.gz",
+]
 
 
 deformationName = f"{fullrunsdir}/deformationField.nii.gz"
 
-fixedManualSegNameList = [f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_632.nii.gz",
-                      f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_728.nii.gz",
-                      f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_1022.nii.gz"
-                       ]
+fixedManualSegNameList = [
+    f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_632.nii.gz",
+    f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_728.nii.gz",
+    f"{path}/{fixedAge}/masks/{fixedAge}/{fixedAge}_mask_1022.nii.gz",
+]
 
-movingManualSegNameList = [f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_632.nii.gz",
-                          f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_728.nii.gz",
-                          f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_1022.nii.gz"                            
-                           ]
-                       
+movingManualSegNameList = [
+    f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_632.nii.gz",
+    f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_728.nii.gz",
+    f"{path}/{fixedAge}/masks/{movingAge}/{movingAge}_mask_1022.nii.gz",
+]
 
-# add th4 time stamp 
+
+# add th4 time stamp
 time = datetime.datetime.now()
 # format time stamp
 time = time.strftime("%d-%m-%Y %H:%M:%S")
@@ -87,14 +85,11 @@ Running transformation of {movingAge} to {fixedAge}.
 # write to file
 with open(f"{fullrunsdir}notes.txt", "w") as f:
     f.write(message)
-    
-
-
 
 
 # elastix read fixed and moving images
 fixedImage = sitk.ReadImage(fixedImagePath)
-movingImage = sitk.ReadImage(movingImagePath)   
+movingImage = sitk.ReadImage(movingImagePath)
 fixed_full_mask = sitk.Image(fixedImage.GetSize(), sitk.sitkUInt8)
 fixed_full_mask.CopyInformation(fixedImage)
 fixed_full_mask = sitk.Cast(fixed_full_mask, sitk.sitkUInt8)
@@ -111,43 +106,49 @@ movingMasks = [moving_full_mask]
 fixedImages = [fixedImage]
 movingImages = [movingImage]
 
-for fixedManualSegName, movingManualSegName in zip(fixedManualSegNameList, movingManualSegNameList):
-    fixedManualSeg = sitk.ReadImage(fixedManualSegName) 
-    movingManualSeg = sitk.ReadImage(movingManualSegName) 
+for fixedManualSegName, movingManualSegName in zip(
+    fixedManualSegNameList, movingManualSegNameList
+):
+    fixedManualSeg = sitk.ReadImage(fixedManualSegName)
+    movingManualSeg = sitk.ReadImage(movingManualSegName)
     fixedManualSeg.SetOrigin(fixedImage.GetOrigin())
     fixedManualSeg.SetSpacing(fixedImage.GetSpacing())
     fixedManualSeg.SetDirection(fixedImage.GetDirection())
     movingManualSeg.SetOrigin(movingImage.GetOrigin())
     movingManualSeg.SetSpacing(movingImage.GetSpacing())
     movingManualSeg.SetDirection(movingImage.GetDirection())
-    
+
     # Convert the image to 8 bit unsigned int
     fixedManualSeg = sitk.Cast(fixedManualSeg, sitk.sitkUInt8)
-    #convert everything above 0 to 1
+    # convert everything above 0 to 1
 
     movingManualSeg = sitk.Cast(movingManualSeg, sitk.sitkUInt8)
-    # Compute the distance map  
-    fixedDistanceMap = sitk.SignedMaurerDistanceMap(fixedManualSeg, insideIsPositive=False, squaredDistance=False)
-    movingDistanceMap = sitk.SignedMaurerDistanceMap(movingManualSeg, insideIsPositive=False, squaredDistance=False)
+    # Compute the distance map
+    fixedDistanceMap = sitk.SignedMaurerDistanceMap(
+        fixedManualSeg, insideIsPositive=False, squaredDistance=False
+    )
+    movingDistanceMap = sitk.SignedMaurerDistanceMap(
+        movingManualSeg, insideIsPositive=False, squaredDistance=False
+    )
     moving_seg_numpy = sitk.GetArrayFromImage(movingDistanceMap)
     fixed_seg_numpy = sitk.GetArrayFromImage(fixedDistanceMap)
-    fixed_seg_numpy[fixed_seg_numpy<0] = 0
-    fixed_seg_mask  =( fixed_seg_numpy < 30 ).astype(np.uint8)
-    moving_seg_mask =( moving_seg_numpy < 30 ).astype(np.uint8)
+    fixed_seg_numpy[fixed_seg_numpy < 0] = 0
+    fixed_seg_mask = (fixed_seg_numpy < 30).astype(np.uint8)
+    moving_seg_mask = (moving_seg_numpy < 30).astype(np.uint8)
     fixed_seg_mask[:150] = 0
     moving_seg_mask[:150] = 0
     fixedSegMask = sitk.GetImageFromArray(fixed_seg_mask)
     movingSegMask = sitk.GetImageFromArray(moving_seg_mask)
     fixed_seg_numpy = np.log(fixed_seg_numpy)
-    #replace inf with 0
+    # replace inf with 0
     fixed_seg_numpy[fixed_seg_numpy == -np.inf] = 0
-    moving_seg_numpy[moving_seg_numpy<0] = 0
+    moving_seg_numpy[moving_seg_numpy < 0] = 0
     moving_seg_numpy = np.log(moving_seg_numpy)
-    #replace inf with 0
+    # replace inf with 0
     moving_seg_numpy[moving_seg_numpy == -np.inf] = 0
     thresh = 2
-    fixed_seg_numpy[fixed_seg_numpy>thresh] =  thresh
-    moving_seg_numpy[moving_seg_numpy>thresh] = thresh
+    fixed_seg_numpy[fixed_seg_numpy > thresh] = thresh
+    moving_seg_numpy[moving_seg_numpy > thresh] = thresh
     """TO DO: Mask off olfactory bulbs in whole brain mask"""
     fixedSegMask.SetOrigin(fixedImage.GetOrigin())
     fixedSegMask.SetSpacing(fixedImage.GetSpacing())
@@ -157,10 +158,8 @@ for fixedManualSegName, movingManualSegName in zip(fixedManualSegNameList, movin
     movingSegMask.SetSpacing(movingImage.GetSpacing())
     movingSegMask.SetDirection(movingImage.GetDirection())
 
-
     movingDistanceMap = sitk.GetImageFromArray(moving_seg_numpy)
     fixedDistanceMap = sitk.GetImageFromArray(fixed_seg_numpy)
-
 
     fixedDistanceMap.SetOrigin(fixedImage.GetOrigin())
     fixedDistanceMap.SetSpacing(fixedImage.GetSpacing())
@@ -169,46 +168,47 @@ for fixedManualSegName, movingManualSegName in zip(fixedManualSegNameList, movin
     movingDistanceMap.SetOrigin(movingImage.GetOrigin())
     movingDistanceMap.SetSpacing(movingImage.GetSpacing())
     movingDistanceMap.SetDirection(movingImage.GetDirection())
-    
+
     import matplotlib.pyplot as plt
-    slice1 = moving_seg_numpy.shape[0]//2
-    im1 = moving_seg_numpy[slice1,:,:]
-    im2 = fixed_seg_numpy[slice1,:,:]
+
+    slice1 = moving_seg_numpy.shape[0] // 2
+    im1 = moving_seg_numpy[slice1, :, :]
+    im2 = fixed_seg_numpy[slice1, :, :]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
     plt.show()
-    slice1 = moving_seg_numpy.shape[1]//2
-    im1 = moving_seg_numpy[:,slice1,:]
-    im2 = fixed_seg_numpy[:,slice1,:]
+    slice1 = moving_seg_numpy.shape[1] // 2
+    im1 = moving_seg_numpy[:, slice1, :]
+    im2 = fixed_seg_numpy[:, slice1, :]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
     plt.show()
-    slice1 = moving_seg_numpy.shape[2]//2
-    im1 = moving_seg_numpy[:,:,slice1]
-    im2 = fixed_seg_numpy[:,:,slice1]
+    slice1 = moving_seg_numpy.shape[2] // 2
+    im1 = moving_seg_numpy[:, :, slice1]
+    im2 = fixed_seg_numpy[:, :, slice1]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
     plt.show()
-    slice1 = moving_seg_numpy.shape[0]//2
-    im1 = moving_seg_mask[slice1,:,:]
-    im2 = fixed_seg_mask[slice1,:,:]
+    slice1 = moving_seg_numpy.shape[0] // 2
+    im1 = moving_seg_mask[slice1, :, :]
+    im2 = fixed_seg_mask[slice1, :, :]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
     plt.show()
-    slice1 = moving_seg_numpy.shape[1]//2
-    im1 = moving_seg_mask[:,slice1,:]
-    im2 = fixed_seg_mask[:,slice1,:]
+    slice1 = moving_seg_numpy.shape[1] // 2
+    im1 = moving_seg_mask[:, slice1, :]
+    im2 = fixed_seg_mask[:, slice1, :]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
     plt.show()
-    slice1 = moving_seg_numpy.shape[2]//2
-    im1 = moving_seg_mask[:,:,slice1]
-    im2 = fixed_seg_mask[:,:,slice1]
+    slice1 = moving_seg_numpy.shape[2] // 2
+    im1 = moving_seg_mask[:, :, slice1]
+    im2 = fixed_seg_mask[:, :, slice1]
     plt.imshow(im2)
     plt.show()
     plt.imshow(im1)
@@ -220,7 +220,6 @@ for fixedManualSegName, movingManualSegName in zip(fixedManualSegNameList, movin
     movingMasks.append(movingSegMask)
 
 
-
 # multiply fixed and moving seg by 255
 
 # Create a mask that includes the whole fixed image
@@ -229,16 +228,18 @@ for fixedManualSegName, movingManualSegName in zip(fixedManualSegNameList, movin
 elastixImageFilter = sitk.ElastixImageFilter()
 elastixImageFilter.LogToFileOn()
 elastixImageFilter.SetFixedImage(fixedImages)
-elastixImageFilter.SetMovingImage(movingImages)    
+elastixImageFilter.SetMovingImage(movingImages)
 elastixImageFilter.SetFixedMask(fixedMasks)
 elastixImageFilter.SetMovingMask(movingMasks)
 
 
 # define the transformation maps
 
-p_t = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_t.json", "translation")
-p_a = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_a.json", "affine")
-p_b = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_b.json", "bspline")
+p_t = createParameterMap(
+    rf"{fixedAge}_parameter_jsons/param_dict_t.json", "translation"
+)
+p_a = createParameterMap(rf"{fixedAge}_parameter_jsons/param_dict_a.json", "affine")
+p_b = createParameterMap(rf"{fixedAge}_parameter_jsons/param_dict_b.json", "bspline")
 
 parameterMapVector = sitk.VectorOfParameterMap()
 parameterMapVector.append(p_t)
@@ -246,7 +247,7 @@ parameterMapVector.append(p_a)
 parameterMapVector.append(p_b)
 
 elastixImageFilter.SetParameterMap(parameterMapVector)
-elastixImageFilter.RemoveParameter('FinalGridSpacingInPhysicalUnits')
+elastixImageFilter.RemoveParameter("FinalGridSpacingInPhysicalUnits")
 
 elastixImageFilter.SetOutputDirectory(fullrunsdir)
 print("Executing elastix transformation...")
@@ -257,7 +258,7 @@ elastixImageFilter.Execute()
 print("Saving result image...")
 # save the resulting (transformed moving image) as a nii file
 sitk.WriteImage(elastixImageFilter.GetResultImage(), resultTemplateName)
-    
+
 # transform segmentation image in the same way
 
 print("Preparing transform parameters...")
@@ -266,9 +267,9 @@ transformParameterMap = elastixImageFilter.GetTransformParameterMap()
 
 # this command ensures that there is no interpolation between labels, important because otherwise it will create average ids for the voxels at borders of two regions.
 # include one of these lines for each parameter map.
-transformParameterMap[0]['FinalBSplineInterpolationOrder'] = ['0']
-transformParameterMap[1]['FinalBSplineInterpolationOrder'] = ['0']
-transformParameterMap[2]['FinalBSplineInterpolationOrder'] = ['0']
+transformParameterMap[0]["FinalBSplineInterpolationOrder"] = ["0"]
+transformParameterMap[1]["FinalBSplineInterpolationOrder"] = ["0"]
+transformParameterMap[2]["FinalBSplineInterpolationOrder"] = ["0"]
 
 
 print("Applying transform to segmentation...")
@@ -278,7 +279,6 @@ transformixImageFilter.SetTransformParameterMap(transformParameterMap)
 
 from skimage import feature
 from tqdm import tqdm
-
 
 
 def create_outline(path, save_path):
@@ -303,6 +303,7 @@ def create_outline(path, save_path):
     pbar.close()
     nib.save(nib.Nifti1Image(edges, img.affine, img.header), save_path)
 
+
 for mSeg, rSegName in zip(movingSegmentation, resultSegmentationName):
     transformixImageFilter.SetMovingImage(sitk.ReadImage(mSeg))
     transformixImageFilter.Execute()
@@ -311,22 +312,27 @@ for mSeg, rSegName in zip(movingSegmentation, resultSegmentationName):
     print(f"Finished processing {mSeg}")
 # save the deformation field
 deformationField = transformixImageFilter.GetDeformationField()
-sitk.WriteImage(deformationField, deformationName) 
+sitk.WriteImage(deformationField, deformationName)
 
 
 print("Finished all processing")
 
-    
 
 shutil.copy("elastix.log", f"{fullrunsdir}elastix.log")
 shutil.copy("TransformParameters.0.txt", f"{fullrunsdir}TransformParameters.0.txt")
 shutil.copy("TransformParameters.1.txt", f"{fullrunsdir}TransformParameters.1.txt")
 shutil.copy("TransformParameters.2.txt", f"{fullrunsdir}TransformParameters.2.txt")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_t.json", f"{fullrunsdir}param_dict_t.json")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_a.json", f"{fullrunsdir}param_dict_a.json")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_b.json", f"{fullrunsdir}param_dict_b.json")
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_t.json", f"{fullrunsdir}param_dict_t.json"
+)
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_a.json", f"{fullrunsdir}param_dict_a.json"
+)
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_b.json", f"{fullrunsdir}param_dict_b.json"
+)
 shutil.copy("P28_script.py", f"{fullrunsdir}script.py")
 shutil.copy(movingImagePath, f"{fullrunsdir}movingImage.nii.gz")
 shutil.copy(fixedImagePath, f"{fullrunsdir}fixedImage.nii.gz")
-#shutil.copy(fixedManualSegName, f"{fullrunsdir}fixedManualSeg.nii.gz")
-#shutil.copy(movingManualSegName, f"{fullrunsdir}movingManualSeg.nii.gz")
+# shutil.copy(fixedManualSegName, f"{fullrunsdir}fixedManualSeg.nii.gz")
+# shutil.copy(movingManualSegName, f"{fullrunsdir}movingManualSeg.nii.gz")

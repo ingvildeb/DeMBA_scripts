@@ -13,24 +13,20 @@ import SimpleITK as sitk
 import numpy as np
 import nibabel as nib
 import json
-import os 
-
-
-    
+import os
 
 
 def createParameterMap(file, regType):
-    
-    with open(file, 'r') as f:
+
+    with open(file, "r") as f:
         param_dict = json.load(f)
-    
-    pMap = sitk.GetDefaultParameterMap(regType) 
-        
+
+    pMap = sitk.GetDefaultParameterMap(regType)
+
     for key, value in param_dict.items():
         pMap[key] = value
-    
-    return pMap
 
+    return pMap
 
 
 path = r"C:\Users\ingvieb\elastix//"
@@ -40,29 +36,31 @@ movingAge = "P14"
 
 movingImagePath = f"{path}/{fixedAge}/DeMBA_{movingAge}_result_brain.nii.gz"
 
-movingSegmentation = [f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2017.nii.gz", 
-                      f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2022.nii.gz",
-                      ]
+movingSegmentation = [
+    f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2017.nii.gz",
+    f"{path}/{fixedAge}/{movingAge}_resultSegmentation_2022.nii.gz",
+]
 
 fixedImagePath = f"{path}/{fixedAge}/DeMBA_{fixedAge}_brain.nii.gz"
 fixedPointsPath = f"{path}/{fixedAge}/fixed.pts"
 movingPointsPath = f"{path}/{fixedAge}/moving.pts"
 
 
-runsdir = fr"{path}/{fixedAge}/runs/"
-numberofruns = len(glob(fr"{runsdir}/*"))
-fullrunsdir = fr"{runsdir}run{numberofruns}/"
+runsdir = rf"{path}/{fixedAge}/runs/"
+numberofruns = len(glob(rf"{runsdir}/*"))
+fullrunsdir = rf"{runsdir}run{numberofruns}/"
 os.makedirs(fullrunsdir, exist_ok=True)
 
 resultTemplateName = f"{fullrunsdir}/DeMBA_{fixedAge}_result_brain.nii.nii.gz"
-resultSegmentationName = [f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii.gz", 
-                          f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii.gz",]
+resultSegmentationName = [
+    f"{fullrunsdir}/{fixedAge}_resultSegmentation_2017.nii.gz",
+    f"{fullrunsdir}/{fixedAge}_resultSegmentation_2022.nii.gz",
+]
 
 deformationName = f"{fullrunsdir}/deformationField.nii.gz"
 
 
-
-# add th4 time stamp 
+# add th4 time stamp
 time = datetime.datetime.now()
 # format time stamp
 time = time.strftime("%d-%m-%Y %H:%M:%S")
@@ -76,32 +74,29 @@ Running transformation of {movingAge} to {fixedAge}.
 # write to file
 with open(f"{fullrunsdir}notes.txt", "w") as f:
     f.write(message)
-    
-
-
 
 
 # elastix read fixed and moving images
 fixedImage = sitk.ReadImage(fixedImagePath)
-movingImage = sitk.ReadImage(movingImagePath)   
+movingImage = sitk.ReadImage(movingImagePath)
 
 fixedImages = [fixedImage]
 movingImages = [movingImage]
 
 
-
 elastixImageFilter = sitk.ElastixImageFilter()
 elastixImageFilter.LogToFileOn()
 elastixImageFilter.SetFixedImage(fixedImages)
-elastixImageFilter.SetMovingImage(movingImages)    
-
+elastixImageFilter.SetMovingImage(movingImages)
 
 
 # define the transformation maps
 
-p_t = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_t.json", "translation")
-p_a = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_a.json", "affine")
-p_b = createParameterMap(fr"{fixedAge}_parameter_jsons/param_dict_b.json", "bspline")
+p_t = createParameterMap(
+    rf"{fixedAge}_parameter_jsons/param_dict_t.json", "translation"
+)
+p_a = createParameterMap(rf"{fixedAge}_parameter_jsons/param_dict_a.json", "affine")
+p_b = createParameterMap(rf"{fixedAge}_parameter_jsons/param_dict_b.json", "bspline")
 
 parameterMapVector = sitk.VectorOfParameterMap()
 parameterMapVector.append(p_t)
@@ -109,7 +104,7 @@ parameterMapVector.append(p_a)
 parameterMapVector.append(p_b)
 
 elastixImageFilter.SetParameterMap(parameterMapVector)
-elastixImageFilter.RemoveParameter('FinalGridSpacingInPhysicalUnits')
+elastixImageFilter.RemoveParameter("FinalGridSpacingInPhysicalUnits")
 
 # add points to the registration
 
@@ -123,7 +118,7 @@ elastixImageFilter.Execute()
 print("Saving result image...")
 # save the resulting (transformed moving image) as a nii file
 sitk.WriteImage(elastixImageFilter.GetResultImage(), resultTemplateName)
-    
+
 # transform segmentation image in the same way
 
 print("Preparing transform parameters...")
@@ -132,9 +127,9 @@ transformParameterMap = elastixImageFilter.GetTransformParameterMap()
 
 # this command ensures that there is no interpolation between labels, important because otherwise it will create average ids for the voxels at borders of two regions.
 # include one of these lines for each parameter map.
-transformParameterMap[0]['FinalBSplineInterpolationOrder'] = ['0']
-transformParameterMap[1]['FinalBSplineInterpolationOrder'] = ['0']
-transformParameterMap[2]['FinalBSplineInterpolationOrder'] = ['0']
+transformParameterMap[0]["FinalBSplineInterpolationOrder"] = ["0"]
+transformParameterMap[1]["FinalBSplineInterpolationOrder"] = ["0"]
+transformParameterMap[2]["FinalBSplineInterpolationOrder"] = ["0"]
 
 
 print("Applying transform to segmentation...")
@@ -144,7 +139,6 @@ transformixImageFilter.SetTransformParameterMap(transformParameterMap)
 
 from skimage import feature
 from tqdm import tqdm
-
 
 
 def create_outline(path, save_path):
@@ -169,6 +163,7 @@ def create_outline(path, save_path):
     pbar.close()
     nib.save(nib.Nifti1Image(edges, img.affine, img.header), save_path)
 
+
 for mSeg, rSegName in zip(movingSegmentation, resultSegmentationName):
     transformixImageFilter.SetMovingImage(sitk.ReadImage(mSeg))
     transformixImageFilter.Execute()
@@ -178,21 +173,27 @@ for mSeg, rSegName in zip(movingSegmentation, resultSegmentationName):
 
 # save the deformation field
 deformationField = transformixImageFilter.GetDeformationField()
-sitk.WriteImage(deformationField, deformationName) 
+sitk.WriteImage(deformationField, deformationName)
 
 
 print("Finished all processing")
 
-    
+
 shutil.copy(fixedPointsPath, f"{fullrunsdir}fixed.pts")
 shutil.copy(movingPointsPath, f"{fullrunsdir}moving.pts")
 shutil.copy("elastix.log", f"{fullrunsdir}elastix.log")
 shutil.copy("TransformParameters.0.txt", f"{fullrunsdir}TransformParameters.0.txt")
 shutil.copy("TransformParameters.1.txt", f"{fullrunsdir}TransformParameters.1.txt")
 shutil.copy("TransformParameters.2.txt", f"{fullrunsdir}TransformParameters.2.txt")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_t.json", f"{fullrunsdir}param_dict_t.json")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_a.json", f"{fullrunsdir}param_dict_a.json")
-shutil.copy(f"{fixedAge}_parameter_jsons/param_dict_b.json", f"{fullrunsdir}param_dict_b.json")
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_t.json", f"{fullrunsdir}param_dict_t.json"
+)
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_a.json", f"{fullrunsdir}param_dict_a.json"
+)
+shutil.copy(
+    f"{fixedAge}_parameter_jsons/param_dict_b.json", f"{fullrunsdir}param_dict_b.json"
+)
 shutil.copy("P7_script.py", f"{fullrunsdir}script.py")
 shutil.copy(movingImagePath, f"{fullrunsdir}movingImage.nii.gz")
 shutil.copy(fixedImagePath, f"{fullrunsdir}fixedImage.nii.gz")

@@ -2,14 +2,16 @@ import cv2
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
+
 # Load the nii volume
 nii_files = [
-    'DeMBA_P7_brain.nii',
-    'DeMBA_P14_brain.nii',
-    'DeMBA_P21_brain.nii',
-    'DeMBA_P28_brain.nii.gz'
+    "DeMBA_P7_brain.nii",
+    "DeMBA_P14_brain.nii",
+    "DeMBA_P21_brain.nii",
+    "DeMBA_P28_brain.nii.gz",
 ]
 import numpy as np
+
 
 def pad_to_square(arr):
     """
@@ -20,7 +22,7 @@ def pad_to_square(arr):
     max_dim = max(rows, cols)
     row_pad = (max_dim - rows) // 2
     col_pad = (max_dim - cols) // 2
-    padded_arr = np.pad(arr, ((row_pad, row_pad), (col_pad, col_pad)), 'edge')
+    padded_arr = np.pad(arr, ((row_pad, row_pad), (col_pad, col_pad)), "edge")
     return padded_arr
 
 
@@ -28,7 +30,7 @@ for nii_file in nii_files[:]:
     nii_img = nib.load(nii_file)
     data = nii_img.get_fdata()
     # change the order of the axes
-    data = np.transpose(data, (2,0,1))
+    data = np.transpose(data, (2, 0, 1))
     # flip two of the axes
     data = data[:, ::-1, ::-1]
     nii_data = data.copy()
@@ -43,17 +45,16 @@ for nii_file in nii_files[:]:
     # Define the number of frames per second for the output video
     fps = 30
 
-    output_file = nii_file.split('.')[0] + '_thumbnail.mp4'
-
+    output_file = nii_file.split(".")[0] + "_thumbnail.mp4"
 
     # Create a VideoWriter object to write the output video
-    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    fourcc = cv2.VideoWriter_fourcc(*"MP4V")
     out = cv2.VideoWriter(output_file, fourcc, fps, output_res)
     thumbnail_image = np.rot90(nii_data[350, :, :])
     thumbnail_image = pad_to_square(thumbnail_image)
     thumbnail_image = cv2.resize(thumbnail_image, output_res)
     # save the thumbnail image
-    cv2.imwrite(nii_file.split('.')[0] + '_thumbnail.png', thumbnail_image)
+    cv2.imwrite(nii_file.split(".")[0] + "_thumbnail.png", thumbnail_image)
     # Create a loop to iterate through each plane
     for plane in range(3):
         # Create a loop to iterate through each slice in the plane

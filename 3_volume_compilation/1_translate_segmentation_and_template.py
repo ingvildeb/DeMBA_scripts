@@ -66,7 +66,6 @@ for end_age in range(t_start_age, youngest_age - 1, -1):
     )
 
 
-
 t_start_age = 56
 volume_url = r"http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2022/annotation_10.nrrd"
 response = requests.get(volume_url)

@@ -1,11 +1,11 @@
-# these lines are useful if you would like to use a git cloned ccf_translator. 
+# these lines are useful if you would like to use a git cloned ccf_translator.
 import os
 import sys
+
 sys.path.append(os.path.abspath("/home/harryc/github/CCF_translator/"))
 import nibabel as nib
 from CCF_translator import VolumeSeries, Volume
 import os
-
 
 
 # Usage example
@@ -22,8 +22,8 @@ for age in KEY_AGES:
     except FileNotFoundError:
         print(f"File not found: {volume_path}")
         continue
-    volume_data = volume_data[:,::-1,::-1] 
-    volume_data = volume_data.transpose([0,2,1])
+    volume_data = volume_data[:, ::-1, ::-1]
+    volume_data = volume_data.transpose([0, 2, 1])
     volume = Volume(
         values=volume_data,
         space=SPACE_NAME,

@@ -1,4 +1,3 @@
-
 import nibabel as nib
 from CCF_translator import VolumeSeries, Volume
 import os
@@ -19,8 +18,8 @@ for age in KEY_AGES:
     except FileNotFoundError:
         print(f"File not found: {volume_path}")
         continue
-    volume_data = volume_data[:,::-1,::-1] 
-    volume_data = volume_data.transpose([0,2,1])
+    volume_data = volume_data[:, ::-1, ::-1]
+    volume_data = volume_data.transpose([0, 2, 1])
     volume = Volume(
         values=volume_data,
         space=SPACE_NAME,
@@ -29,7 +28,7 @@ for age in KEY_AGES:
         age_PND=age,
     )
     volumes.append(volume)
-    
+
 
 volume_series = VolumeSeries(volumes)
 volume_series.interpolate_series()
