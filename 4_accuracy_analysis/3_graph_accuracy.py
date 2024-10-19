@@ -7,18 +7,33 @@ import numpy as np
 datapath = "../data_files/"
 
 ages = ["P28", "P21", "P14"]
+
+colours = pd.read_csv(f"{datapath}/points_hierarchies.csv")
+colour_map = {
+    "Isocortex": "#3F631C",
+    "Hippocampal formation": "#7ED04B",
+    "Olfactory areas": "#9AD2BD",
+    "Hypothalamus": "#E32F21",
+    "Cerebral nuclei": "#98D6F9",
+    "Midbrain, hindbrain, medulla": "#FF9B88",
+    "Thalamus": "#FF70A4",
+    "Cerebellum": "#F0F080",
+    "Fibre Tracts":"#CCCCCC",
+    "Ventricular System":"#AAAAAA",
+    "unknown":"#000000",
+    "out of brain":"#000000"
+}
+
+colour_list = [colour_map.get(region, "#FFFFFF") for region in colours['hierarchical_region']]
+
 for age in ages:
     df = pd.read_csv(f"{datapath}/iterative_{age}.csv")
-
+    
     # Extract the data
     Ing = df["Distance Ingvild to others"]
     Dem = df["Distance DeMBA to others"]
     Sim = df["Distance Simon to others"]
     Hei = df["Distance Heidi to others"]
-    print("Ing: ", np.nanmedian(Ing))
-    print("Dem: ", np.nanmedian(Dem))
-    print("Sim: ", np.nanmedian(Sim))
-    print("Hei: ", np.nanmedian(Hei))
 
     # Combine the data into a DataFrame for easier plotting
     data = pd.DataFrame({"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "DeMBA": Dem})
@@ -38,10 +53,10 @@ for age in ages:
 
     # Plot the bar plot on the subplot(s)
     bars1 = sns.barplot(
-        data=data, ci=None, palette="muted", estimator=np.median, ax=ax1
+        data=data, errorbar=None, palette="muted", estimator=np.median, ax=ax1
     )
     bars2 = sns.barplot(
-        data=data, ci=None, palette="muted", estimator=np.median, ax=ax2
+        data=data, errorbar=None, palette="muted", estimator=np.median, ax=ax2
     )
 
     # Customize the bars to have white face color and black edge color
@@ -62,9 +77,14 @@ for age in ages:
         sns.swarmplot(
             x=[column] * len(data_bottom),
             y=data_bottom[column],
-            color="black",
-            alpha=0.5,
+            hue=colours['hierarchical_region'][data[column] <= lower_threshold],
+            palette=colour_map,
+            alpha=1,
             ax=ax2,
+            legend=False,
+            edgecolor="black",  # Add hard outline
+            linewidth=0.5,  # Set the width of the outline
+            clip_on=False  # Allow points to be drawn outside the axes limits
         )
 
         # Filter data points for the top graph
@@ -72,9 +92,14 @@ for age in ages:
         sns.swarmplot(
             x=[column] * len(data_top),
             y=data_top[column],
-            color="black",
-            alpha=0.5,
+            hue=colours['hierarchical_region'][data[column] > lower_threshold],
+            palette=colour_map,
+            alpha=1,
             ax=ax1,
+            legend=False,
+            edgecolor="black",  # Add hard outline
+            linewidth=0.5,  # Set the width of the outline
+            clip_on=False  # Allow points to be drawn outside the axes limits
         )
 
     # Annotate the bars with the median values, offset to the left
@@ -141,3 +166,13 @@ for age in ages:
     plt.savefig(f"{datapath}/two_scale_plot_{age}.svg", format="svg")
 
     plt.show()
+
+# Create a separate legend plot
+fig_legend = plt.figure(figsize=(8, 6))
+ax_legend = fig_legend.add_subplot(111)
+handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in colour_map.values()]
+labels = colour_map.keys()
+ax_legend.legend(handles, labels, loc='center')
+ax_legend.axis('off')
+plt.savefig(f"{datapath}/legend_plot.svg", format="svg")
+plt.show()
