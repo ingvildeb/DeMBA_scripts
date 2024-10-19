@@ -24,11 +24,17 @@ colour_map = {
     "out of brain":"#000000"
 }
 
-colour_list = [colour_map.get(region, "#FFFFFF") for region in colours['hierarchical_region']]
 
 for age in ages:
+
+    # Read the CSV file into a DataFrame
     df = pd.read_csv(f"{datapath}/iterative_{age}.csv")
-    
+
+    # Ensure the colours DataFrame and df are in sync
+    merged_df = df.merge(colours, left_on='Acronym', right_on='point name', how='left')
+
+    # Create the colour list based on the merged DataFrame
+    colour_list = [colour_map.get(region, "#FFFFFF") for region in merged_df['hierarchical_region']]
     # Extract the data
     Ing = df["Distance Ingvild to others"]
     Dem = df["Distance DeMBA to others"]
