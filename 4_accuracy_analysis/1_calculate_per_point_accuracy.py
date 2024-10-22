@@ -35,7 +35,7 @@ def one_vs_rest(one_point, rest):
     rest_point = np.median(rest, axis=0)
     return abs(np.linalg.norm(rest_point - one_point))
 
-for m in ["iterative"] #, "individual"]:
+for m in ["iterative"]: #, "individual"]:
     mean_older_points = None
     for i in tqdm(range(len(key_ages) - 1)):
         older_age = key_ages[i]
