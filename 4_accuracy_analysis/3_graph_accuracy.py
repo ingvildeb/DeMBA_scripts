@@ -6,7 +6,7 @@ import numpy as np
 # Load the data
 datapath = "../data_files/"
 
-ages = ["P28", "P21", "P14"]
+ages = ["P28", "P21", "P14", "P07", "P04"]
 
 colours = pd.read_csv(f"{datapath}/points_hierarchies.csv")
 colour_map = {
@@ -24,7 +24,6 @@ colour_map = {
     "out of brain":"#000000"
 }
 
-
 for age in ages:
 
     # Read the CSV file into a DataFrame
@@ -40,9 +39,10 @@ for age in ages:
     Dem = df["Distance DeMBA to others"]
     Sim = df["Distance Simon to others"]
     Hei = df["Distance Heidi to others"]
+    Har = df["Distance Harry to others"]
 
     # Combine the data into a DataFrame for easier plotting
-    data = pd.DataFrame({"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "DeMBA": Dem})
+    data = pd.DataFrame({"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "Rater 4": Har, "DeMBA": Dem})
     data = data * 20
 
     # Define the thresholds for the broken axis
@@ -121,7 +121,7 @@ for age in ages:
 
     for p in ax2.patches:
         ax2.annotate(
-            f"{p.get_height():.1f}",
+            f"{p.get_height():.1f}", 
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
@@ -157,7 +157,7 @@ for age in ages:
 
     # Customize the plot
     ax1.set_title(f"{age} Median Error")
-    ax2.set_xlabel("Individuals")
+    # ax2.set_xlabel("Individuals")
     ax1.set_ylabel("")
     ax2.set_ylabel("")
     # Add a centered y-axis label
