@@ -11,16 +11,20 @@ points_dataset_i = pd.read_excel(
     r"../data_files/DeMBA_landmarksValidation_Ingvild.xlsx"
 )
 points_dataset_s = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Simon.xlsx")
-points_dataset_r = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Harry.xlsx") # Harry's data
+points_dataset_r = pd.read_excel(
+    r"../data_files/DeMBA_landmarksValidation_Harry.xlsx"
+)  # Harry's data
 
 target_space = "demba_dev_mouse"
 
 col_format = "{}: {} ({} sections)"
 
+
 def format_column_name(age_name, axis):
     axis_mapping = {"x": "sagittal", "y": "horizontal", "z": "coronal"}
     axis_name = axis_mapping.get(axis, "unknown")
     return f"{age_name}: {axis} ({axis_name} sections)"
+
 
 def extract_points_from_df(dataset, age_name):
     return dataset[
@@ -31,11 +35,13 @@ def extract_points_from_df(dataset, age_name):
         ]
     ].values
 
+
 def one_vs_rest(one_point, rest):
     rest_point = np.median(rest, axis=0)
     return abs(np.linalg.norm(rest_point - one_point))
 
-for m in ["iterative"]: #, "individual"]:
+
+for m in ["iterative"]:  # , "individual"]:
     mean_older_points = None
     for i in tqdm(range(len(key_ages) - 1)):
         older_age = key_ages[i]
@@ -59,14 +65,22 @@ for m in ["iterative"]: #, "individual"]:
         younger_points_simon = extract_points_from_df(
             points_dataset_s, name_younger_age
         )
-        older_points_harry = extract_points_from_df(points_dataset_r, name_older_age) # Extract older points for Harry
+        older_points_harry = extract_points_from_df(
+            points_dataset_r, name_older_age
+        )  # Extract older points for Harry
         younger_points_harry = extract_points_from_df(
             points_dataset_r, name_younger_age
-        ) # Extract younger points for Harry
+        )  # Extract younger points for Harry
 
         if mean_older_points is None or m == "individual":
             mean_older_points = np.mean(
-                [older_points_ingvild, older_points_heidi, older_points_simon, older_points_harry], axis=0
+                [
+                    older_points_ingvild,
+                    older_points_heidi,
+                    older_points_simon,
+                    older_points_harry,
+                ],
+                axis=0,
             )
         points = CCF_translator.PointSet(
             values=mean_older_points,
@@ -76,9 +90,34 @@ for m in ["iterative"]: #, "individual"]:
         )
         points.transform(target_age=younger_age, target_space=target_space)
         ing, sim, hei, dem, har = [], [], [], [], []
-        s2i, s2d, s2h, i2h, i2d, h2d, s2r, r2h, r2i, r2d = [], [], [], [], [], [], [], [], [], []
+        s2i, s2d, s2h, i2h, i2d, h2d, s2r, r2h, r2i, r2d = (
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
         hx, hy, hz, ix, iy, iz, dx, dy, dz, sx, sy, sz, rx, ry, rz = (
-            [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
         )
         new_mean_older_points = []
         for i in range(len(mean_older_points)):
@@ -141,7 +180,7 @@ for m in ["iterative"]: #, "individual"]:
             r_h_dist = abs(np.linalg.norm(harry_point - heidi_point))
             r_i_dist = abs(np.linalg.norm(harry_point - ingvild_point))
             r_d_dist = abs(np.linalg.norm(harry_point - pred_point))
-            
+
             ing.append(i_dist)
             sim.append(s_dist)
             hei.append(h_dist)

@@ -18,10 +18,10 @@ colour_map = {
     "Midbrain, hindbrain, medulla": "#FF9B88",
     "Thalamus": "#FF70A4",
     "Cerebellum": "#F0F080",
-    "Fibre Tracts":"#CCCCCC",
-    "Ventricular System":"#AAAAAA",
-    "unknown":"#000000",
-    "out of brain":"#000000"
+    "Fibre Tracts": "#CCCCCC",
+    "Ventricular System": "#AAAAAA",
+    "unknown": "#000000",
+    "out of brain": "#000000",
 }
 
 for age in ages:
@@ -30,10 +30,12 @@ for age in ages:
     df = pd.read_csv(f"{datapath}/iterative_{age}.csv")
 
     # Ensure the colours DataFrame and df are in sync
-    merged_df = df.merge(colours, left_on='Acronym', right_on='point name', how='left')
+    merged_df = df.merge(colours, left_on="Acronym", right_on="point name", how="left")
 
     # Create the colour list based on the merged DataFrame
-    colour_list = [colour_map.get(region, "#FFFFFF") for region in merged_df['hierarchical_region']]
+    colour_list = [
+        colour_map.get(region, "#FFFFFF") for region in merged_df["hierarchical_region"]
+    ]
     # Extract the data
     Ing = df["Distance Ingvild to others"]
     Dem = df["Distance DeMBA to others"]
@@ -42,7 +44,9 @@ for age in ages:
     Har = df["Distance Harry to others"]
 
     # Combine the data into a DataFrame for easier plotting
-    data = pd.DataFrame({"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "Rater 4": Har, "DeMBA": Dem})
+    data = pd.DataFrame(
+        {"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "Rater 4": Har, "DeMBA": Dem}
+    )
     data = data * 20
 
     # Define the thresholds for the broken axis
@@ -83,14 +87,14 @@ for age in ages:
         sns.swarmplot(
             x=[column] * len(data_bottom),
             y=data_bottom[column],
-            hue=colours['hierarchical_region'][data[column] <= lower_threshold],
+            hue=colours["hierarchical_region"][data[column] <= lower_threshold],
             palette=colour_map,
             alpha=1,
             ax=ax2,
             legend=False,
             edgecolor="black",  # Add hard outline
             linewidth=0.5,  # Set the width of the outline
-            clip_on=False  # Allow points to be drawn outside the axes limits
+            clip_on=False,  # Allow points to be drawn outside the axes limits
         )
 
         # Filter data points for the top graph
@@ -98,14 +102,14 @@ for age in ages:
         sns.swarmplot(
             x=[column] * len(data_top),
             y=data_top[column],
-            hue=colours['hierarchical_region'][data[column] > lower_threshold],
+            hue=colours["hierarchical_region"][data[column] > lower_threshold],
             palette=colour_map,
             alpha=1,
             ax=ax1,
             legend=False,
             edgecolor="black",  # Add hard outline
             linewidth=0.5,  # Set the width of the outline
-            clip_on=False  # Allow points to be drawn outside the axes limits
+            clip_on=False,  # Allow points to be drawn outside the axes limits
         )
 
     # Annotate the bars with the median values, offset to the left
@@ -121,7 +125,7 @@ for age in ages:
 
     for p in ax2.patches:
         ax2.annotate(
-            f"{p.get_height():.1f}", 
+            f"{p.get_height():.1f}",
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
@@ -134,27 +138,22 @@ for age in ages:
         lower_threshold - buffer, upper_threshold + buffer
     )  # Add buffer to lower and upper limits
     ax2.set_ylim(0, lower_threshold)
-
     # Hide the spines between ax1 and ax2
     ax1.spines["bottom"].set_visible(False)
     ax2.spines["top"].set_visible(False)
     ax1.xaxis.tick_top()
     ax1.tick_params(labeltop=False)  # Don't put tick labels at the top
     ax2.xaxis.tick_bottom()
-
     # Add a straight dotted red line to indicate the separation
     ax1.axhline(y=lower_threshold, color="red", linestyle="--", linewidth=1)
     ax2.axhline(y=lower_threshold, color="red", linestyle="--", linewidth=1)
-
     # Set y-ticks automatically and ensure lower_threshold is included
     y_ticks_bottom = np.arange(0, lower_threshold, 200).tolist()
     if lower_threshold not in y_ticks_bottom:
         y_ticks_bottom.append(lower_threshold)
     ax2.set_yticks(y_ticks_bottom)
-
     y_ticks_top = np.arange(lower_threshold, upper_threshold + buffer + 1000, 1000)
     ax1.set_yticks(y_ticks_top)
-
     # Customize the plot
     ax1.set_title(f"{age} Median Error")
     # ax2.set_xlabel("Individuals")
@@ -170,15 +169,17 @@ for age in ages:
     )
     # Save the plot as an SVG file
     plt.savefig(f"{datapath}/two_scale_plot_{age}.svg", format="svg")
-
     plt.show()
 
 # Create a separate legend plot
 fig_legend = plt.figure(figsize=(8, 6))
 ax_legend = fig_legend.add_subplot(111)
-handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in colour_map.values()]
+handles = [
+    plt.Line2D([0], [0], marker="o", color="w", markerfacecolor=color, markersize=10)
+    for color in colour_map.values()
+]
 labels = colour_map.keys()
-ax_legend.legend(handles, labels, loc='center')
-ax_legend.axis('off')
+ax_legend.legend(handles, labels, loc="center")
+ax_legend.axis("off")
 plt.savefig(f"{datapath}/legend_plot.svg", format="svg")
 plt.show()
