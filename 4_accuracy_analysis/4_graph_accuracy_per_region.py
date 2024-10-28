@@ -69,7 +69,7 @@ for age in ages:
     plt.xlabel("Hierarchical Region")
     plt.ylabel("Median DeMBA Distance (microns)")
     plt.xticks(rotation=45, ha="right")
-
+    plt.tight_layout()
     # Save the plot as an SVG file
     plt.savefig(f"{datapath}/demba_distance_per_region_{age}.svg", format="svg")
     plt.show()
