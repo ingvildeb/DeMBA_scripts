@@ -2,13 +2,38 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import numpy as np
+from scipy.stats import ttest_rel
+import warnings
 
-# Load the data
+# Suppress specific warnings
+warnings.filterwarnings(
+    "ignore",
+    category=FutureWarning,
+    message="Passing `palette` without assigning `hue` is deprecated.",
+)
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message="Ignoring `palette` because no `hue` variable has been assigned.",
+)
+warnings.filterwarnings(
+    "ignore",
+    category=FutureWarning,
+    message="use_inf_as_na option is deprecated and will be removed in a future version.",
+)
+warnings.filterwarnings(
+    "ignore",
+    category=FutureWarning,
+    message="When grouping with a length-1 list-like, you will need to pass a length-1 tuple to get_group in a future version of pandas.",
+)
+
 datapath = "../data_files/"
 
 ages = ["P28", "P21", "P14", "P07", "P04"]
 
 colours = pd.read_csv(f"{datapath}/points_hierarchies.csv")
+
+colours = colours.loc[:, ~colours.columns.str.contains("^Unnamed")]
 colour_map = {
     "Isocortex": "#3F631C",
     "Hippocampal formation": "#7ED04B",
@@ -20,7 +45,6 @@ colour_map = {
     "Cerebellum": "#F0F080",
     "Fibre Tracts": "#CCCCCC",
     "Ventricular System": "#AAAAAA",
-    "unknown": "#000000",
     "out of brain": "#000000",
 }
 
@@ -43,15 +67,28 @@ for age in ages:
     Hei = df["Distance Heidi to others"]
     Har = df["Distance Harry to others"]
 
+    mean_human = np.mean([Ing, Sim, Hei, Har], axis=0)
     # Combine the data into a DataFrame for easier plotting
     data = pd.DataFrame(
-        {"Rater 1": Ing, "Rater 2": Sim, "Rater 3": Hei, "Rater 4": Har, "DeMBA": Dem}
+        {
+            "Rater 1": Ing,
+            "Rater 2": Sim,
+            "Rater 3": Hei,
+            "Rater 4": Har,
+            "Average of humans": mean_human,
+            "DeMBA": Dem,
+        }
     )
+    # convert the data from voxels to microns
     data = data * 20
+
+    # Perform paired samples t-test
+    nans = np.isnan(mean_human) | np.isnan(Dem)
+    t_stat, p_value = ttest_rel(mean_human[~nans], Dem[~nans])
 
     # Define the thresholds for the broken axis
     lower_threshold = 650
-    upper_threshold = 9000
+    upper_threshold = 6000
     buffer = 50  # Add a buffer to ensure points are not cropped
 
     # Create the figure and two subplots with height ratios
@@ -63,10 +100,10 @@ for age in ages:
 
     # Plot the bar plot on the subplot(s)
     bars1 = sns.barplot(
-        data=data, errorbar=None, palette="muted", estimator=np.median, ax=ax1
+        data=data, errorbar=None, palette="muted", estimator=np.mean, ax=ax1
     )
     bars2 = sns.barplot(
-        data=data, errorbar=None, palette="muted", estimator=np.median, ax=ax2
+        data=data, errorbar=None, palette="muted", estimator=np.mean, ax=ax2
     )
 
     # Customize the bars to have white face color and black edge color
@@ -81,13 +118,14 @@ for age in ages:
         bar.set_linewidth(1)
 
     # Add the scatter plot on the subplot(s) using swarmplot to avoid overlap
+    # Add the scatter plot on the subplot(s) using swarmplot to avoid overlap
     for i, column in enumerate(data.columns):
         # Filter data points for the bottom graph
         data_bottom = data[data[column] <= lower_threshold]
         sns.swarmplot(
             x=[column] * len(data_bottom),
             y=data_bottom[column],
-            hue=colours["hierarchical_region"][data[column] <= lower_threshold],
+            hue=merged_df["hierarchical_region"][data[column] <= lower_threshold],
             palette=colour_map,
             alpha=1,
             ax=ax2,
@@ -102,7 +140,7 @@ for age in ages:
         sns.swarmplot(
             x=[column] * len(data_top),
             y=data_top[column],
-            hue=colours["hierarchical_region"][data[column] > lower_threshold],
+            hue=merged_df["hierarchical_region"][data[column] > lower_threshold],
             palette=colour_map,
             alpha=1,
             ax=ax1,
@@ -112,14 +150,14 @@ for age in ages:
             clip_on=False,  # Allow points to be drawn outside the axes limits
         )
 
-    # Annotate the bars with the median values, offset to the left
+    # Annotate the bars with the mean values, offset to the left
     for p in ax1.patches:
         ax1.annotate(
             f"{p.get_height():.1f}",
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
-            xytext=(-40, 9),  # Offset to the left
+            xytext=(-30, 9),  # Offset to the left
             textcoords="offset points",
         )
 
@@ -129,10 +167,30 @@ for age in ages:
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
-            xytext=(-40, 9),  # Offset to the left
+            xytext=(-30, 9),  # Offset to the left
             textcoords="offset points",
         )
+    # Annotate the plot with the p-value and significance
+    significance = (
+        "ns"
+        if p_value > 0.05
+        else "*" if p_value <= 0.05 else "**" if p_value <= 0.01 else "***"
+    )
 
+    # Add lines to show which bars are being compared
+    x1, x2 = 4, 5  # Indices of the bars being compared (Average of humans and DeMBA)
+    y, h, col = upper_threshold - 2000, 200, "k"
+    ax1.plot([x1, x1, x2, x2], [y, y + h, y + h, y], lw=1.5, c=col)
+    ax1.plot([x1, x1], [y, y - h], lw=1.5, c=col)  # Left vertical line pointing down
+    ax1.plot([x2, x2], [y, y - h], lw=1.5, c=col)  # Right vertical line pointing down
+    ax1.text(
+        (x1 + x2) * 0.5,
+        y + h + 200,
+        f"p = {p_value:.3f} ({significance})",
+        ha="center",
+        va="bottom",
+        color=col,
+    )
     # Set the y-axis limits
     ax1.set_ylim(
         lower_threshold - buffer, upper_threshold + buffer
@@ -155,7 +213,7 @@ for age in ages:
     y_ticks_top = np.arange(lower_threshold, upper_threshold + buffer + 1000, 1000)
     ax1.set_yticks(y_ticks_top)
     # Customize the plot
-    ax1.set_title(f"{age} Median Error")
+    ax1.set_title(f"{age} Mean Error")
     # ax2.set_xlabel("Individuals")
     ax1.set_ylabel("")
     ax2.set_ylabel("")
@@ -163,7 +221,7 @@ for age in ages:
     fig.text(
         0.04,
         0.5,
-        "Distance to mean of others (microns)",
+        "Distance to median of others (microns)",
         va="center",
         rotation="vertical",
     )

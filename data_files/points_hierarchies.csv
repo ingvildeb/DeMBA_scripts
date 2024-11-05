@@ -1,71 +1,55 @@
-,point name,hierarchical_region
-0,ant coronal,out of brain
-1,posterior accessory olfactory bulb left,Olfactory areas
-2,posterior accessory olfactory bulb right,Olfactory areas
-3,mid orbital area  right,Olfactory areas
-4,mid orbital arearight lateral,Isocortex
-5,mid orbital area left,Olfactory areas
-6,mid orbital area  left lateral,Isocortex
-7,anterior nucleus accumbens left,Olfactory areas
-8,anterior nucleus accumbens right,Olfactory areas
-9,Ventral anterior commissure right,Olfactory areas
-10,Ventral anterior commissure left,Olfactory areas
-11,Anterior striatum right,Cerebral nuclei
-12,anterior striatum right lateral,out of brain
-13,anterior septal nucleus right,Cerebral nuclei
-14,Anterior striatum left,Cerebral nuclei
-15,Anterior striatum left lateral,Isocortex
-16,anterior septal nucleus left,Cerebral nuclei
-17,Corpus callosum merge,Fibre Tracts
-18,Frontal middle 1,Fibre Tracts
-19,Frontal left 2,Ventricular System
-20,Frontal right 2,Ventricular System
-21,Anterior Commissure Right,Cerebral nuclei
-22,Anterior Commissure Left,Cerebral nuclei
-23,Anterior Commissure: WHS origin,Fibre Tracts
-24,"Anterior Globus pallidus, external segment left hemisphere",Cerebral nuclei
-25,"Anterior Globus pallidus, external segment right hemisphere",Cerebral nuclei
-26,Ventricle middle 1,Ventricular System
-27,anterior thalamus,Thalamus
-28,"Anterior Globus pallidus, internal segment  right hemisphere",Cerebral nuclei
-29,"Anterior Globus pallidus, internal segment  left hemisphere",Cerebral nuclei
-30,Corpus Callosum middle,unknown
-31,Ventral hemisphere right,out of brain
-32,Ventral hemisphere left,out of brain
-33,ventral thalamus,Hypothalamus
-34,Anterior Subthalamic nucleus left hemisphere,Hypothalamus
-35,Anterior Subthalamic nucleus right hemisphere,Hypothalamus
-36,Dorsal hippocampal formation left,Hippocampal formation
-37,Dorsal hippocampal formation right,Hippocampal formation
-38,dorsal posterior striatum left,Cerebral nuclei
-39,dorsal posterior striatum right,Cerebral nuclei
-40,Dentate gyrus tip right,Hippocampal formation
-41,Dentate gyrus tip left,Hippocampal formation
-42,Hippocampus middle 1,Ventricular System
-43,Splenium of the corpus callosum,unknown
-44,ventral posterior striatum left,Isocortex
-45,ventral posterior striatum right,Isocortex
-46,Anterior Substantia nigra left hemisphere,"Midbrain, hindbrain, medulla"
-47,Anterior Substantia nigra right hemisphere,Fibre Tracts
-48,Lateral hemisphere left,Isocortex
-49,Dorsal hemisphere right,Isocortex
-50,Lateral hemisphere right,out of brain
-51,Dorsal hemisphere left,Isocortex
-52,Ventral Substantia nigra left hemisphere,Fibre Tracts
-53,Ventral Substantia nigra right hemisphere,Fibre Tracts
-54,Posterior cortex middle,out of brain
-55,Ventral interpeduncular nucleus,unknown
-56,Pontine nucleus middle,out of brain
-57,Interpeduncular nucleus middle,unknown
-58,Interpeduncular nucleus left,unknown
-59,Interpeduncular nucleus right,"Midbrain, hindbrain, medulla"
-60,Cerebral aqueduct,"Midbrain, hindbrain, medulla"
-61,Posterior inferior colliculus right,Cerebellum
-62,Posterior inferior colliculus left,Cerebellum
-63,posterior cerebellar Central lobule 3,Fibre Tracts
-64,last posterior cerebellar central lobule 3 left,out of brain
-65,last posterior cerebellar central lobule 3 right,out of brain
-66,"posterior cerebellar Culmen 4,5",Cerebellum
-67,posterior cerebellar Declive,Cerebellum
-68,posterior posterior cerebellar Declive,out of brain
-69,post coronal,out of brain
+,point name,hierarchical_region,region_id
+0,posterior accessory olfactory bulb left,Olfactory areas,698.0
+1,posterior accessory olfactory bulb right,Olfactory areas,698.0
+2,mid orbital area  right,Olfactory areas,698.0
+3,mid orbital arearight lateral,Isocortex,704.0
+4,mid orbital area left,Olfactory areas,698.0
+5,mid orbital area  left lateral,Isocortex,704.0
+6,anterior nucleus accumbens left,Olfactory areas,698.0
+7,anterior nucleus accumbens right,Olfactory areas,698.0
+8,Ventral anterior commissure right,Olfactory areas,159.0
+9,Ventral anterior commissure left,Olfactory areas,159.0
+10,Anterior striatum right,Cerebral nuclei,672.0
+11,anterior septal nucleus right,Cerebral nuclei,477.0
+12,Anterior striatum left,Cerebral nuclei,672.0
+13,anterior septal nucleus left,Cerebral nuclei,477.0
+14,Corpus callosum merge,Fibre Tracts,1108.0
+15,Frontal middle 1,Fibre Tracts,1108.0
+16,Anterior Commissure Right,Cerebral nuclei,351.0
+17,Anterior Commissure Left,Cerebral nuclei,351.0
+18,Anterior Commissure: WHS origin,Fibre Tracts,900.0
+19,"Anterior Globus pallidus, external segment left hemisphere",Cerebral nuclei,672.0
+20,"Anterior Globus pallidus, external segment right hemisphere",Cerebral nuclei,672.0
+21,Ventricle middle 1,Ventricular System,129.0
+22,anterior thalamus,Thalamus,149.0
+23,"Anterior Globus pallidus, internal segment  right hemisphere",Cerebral nuclei,803.0
+24,"Anterior Globus pallidus, internal segment  left hemisphere",Cerebral nuclei,803.0
+25,Corpus Callosum middle,Fibre Tracts,997.0
+26,ventral thalamus,Hypothalamus,118.0
+27,Anterior Subthalamic nucleus left hemisphere,Hypothalamus,470.0
+28,Anterior Subthalamic nucleus right hemisphere,Hypothalamus,470.0
+29,Dorsal hippocampal formation left,Hippocampal formation,382.0
+30,Dorsal hippocampal formation right,Hippocampal formation,382.0
+31,dorsal posterior striatum left,Cerebral nuclei,672.0
+32,dorsal posterior striatum right,Cerebral nuclei,672.0
+33,Dentate gyrus tip right,Hippocampal formation,10703.0
+34,Dentate gyrus tip left,Hippocampal formation,10703.0
+35,Splenium of the corpus callosum,Fibre Tracts,997.0
+36,ventral posterior striatum left,Isocortex,131.0
+37,ventral posterior striatum right,Isocortex,131.0
+38,Anterior Substantia nigra left hemisphere,"Midbrain, hindbrain, medulla",381.0
+39,Anterior Substantia nigra right hemisphere,Fibre Tracts,924.0
+40,Ventral Substantia nigra left hemisphere,Fibre Tracts,924.0
+41,Ventral Substantia nigra right hemisphere,Fibre Tracts,924.0
+42,Ventral interpeduncular nucleus,Fibre Tracts,997.0
+43,Interpeduncular nucleus middle,"Midbrain, hindbrain, medulla",607344838.0
+44,Interpeduncular nucleus left,"Midbrain, hindbrain, medulla",607344846.0
+45,Interpeduncular nucleus right,"Midbrain, hindbrain, medulla",313.0
+46,Posterior inferior colliculus right,Cerebellum,1091.0
+47,Posterior inferior colliculus left,Cerebellum,1091.0
+48,posterior cerebellar Central lobule 3,Fibre Tracts,728.0
+49,last posterior cerebellar central lobule 3 left,out of brain,0.0
+50,last posterior cerebellar central lobule 3 right,out of brain,0.0
+51,"posterior cerebellar Culmen 4,5",Cerebellum,1091.0
+52,posterior cerebellar Declive,Cerebellum,936.0
+53,posterior posterior cerebellar Declive,out of brain,0.0

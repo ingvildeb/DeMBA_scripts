@@ -20,23 +20,22 @@ colour_map = {
     "Cerebellum": "#F0F080",
     "Fibre Tracts": "#CCCCCC",
     "Ventricular System": "#AAAAAA",
-    "unknown": "#000000",
     "out of brain": "#000000",
 }
 
 for age in ages:
     # Read the CSV file into a DataFrame
     df = pd.read_csv(f"{datapath}/iterative_{age}.csv")
-
     # Ensure the colours DataFrame and df are in sync
     merged_df = df.merge(colours, left_on="Acronym", right_on="point name", how="left")
     # Filter the data to focus on the "DeMBA" column
     data = merged_df[["hierarchical_region", "Distance DeMBA to others"]]
     data = data.rename(columns={"Distance DeMBA to others": "DeMBA"})
-
+    data['DeMBA'] = data['DeMBA'] * 20
+    
     # Group the data by hierarchical region
-    grouped_data = data.groupby("hierarchical_region").median().reset_index()
-
+    grouped_data = data.groupby("hierarchical_region").mean().reset_index()
+    #convert to mictons
     # Define the order of hierarchical regions
     order = grouped_data["hierarchical_region"]
 
@@ -48,26 +47,24 @@ for age in ages:
         data=grouped_data,
         palette=colour_map,
         edgecolor="black",
-        order=order  # Ensure consistent order
+        order=order,  # Ensure consistent order
     )
 
     # Overlay individual data points
-    sns.stripplot(
+    sns.swarmplot(
         x="hierarchical_region",
         y="DeMBA",
         data=data,
         color="white",
-        alpha=1,
         edgecolor="black",  # Add hard outline
         linewidth=0.5,  # Set the width of the outline
-        jitter=True,
-        order=order  # Ensure consistent order
+        order=order,  # Ensure consistent order
     )
 
     # Customize the plot
     plt.title(f"{age} DeMBA Distance per Region")
     plt.xlabel("Hierarchical Region")
-    plt.ylabel("Median DeMBA Distance (microns)")
+    plt.ylabel("Mean DeMBA Distance (microns)")
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     # Save the plot as an SVG file

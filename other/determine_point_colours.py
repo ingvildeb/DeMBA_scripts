@@ -30,17 +30,17 @@ new_names = {
 
 
 colour_lookup = pd.read_excel(
-    r"/home/harryc/github/DeMBA_scripts/data_files/CustomRegionMouse_2017.xlsx"
+    r"/home/harryc/github/DeMBA_scripts/data_files/CustomRegionMouse_2017_edit.xlsx"
 )
 colour_lookup = colour_lookup.rename(columns=new_names)
 
-arr = nib.load(
-    "/home/harryc/github/CCF_translator_local/demo_data/demba_20um/P56_annotation_20um.nii.gz"
-).get_fdata()
+arr = nib.load("../data_files/DeMBA_P56_segmentation_2017_20um.nii.gz").get_fdata()
 df = pd.read_excel(
-    r"/home/harryc/github/DeMBA_scripts/data_files/DeMBA_landmarksValidation_Ingvild.xlsx"
+    r"/home/harryc/github/DeMBA_scripts/data_files/DeMBA_landmarksValidation_Harry.xlsx"
 )
 
+keep_names = df["Full name"][df["Remove"] != 1]
+df = df[df["Full name"].isin(keep_names)]
 
 region_graph_colour = {
     i: j
@@ -55,7 +55,7 @@ region_graph_colour = {
 }
 
 
-point_lookup = {"point name": [], "hierarchical_region": []}
+point_lookup = {"point name": [], "hierarchical_region": [], "region_id": []}
 
 for point_name, v in region_graph_colour.items():
     hierarchical_region = "unknown"
@@ -67,7 +67,7 @@ for point_name, v in region_graph_colour.items():
             temp_ids = colour_lookup[r].iloc[2:]
             if v in temp_ids.values.astype(float):
                 hierarchical_region = r
-
+    point_lookup["region_id"].append(v)
     point_lookup["hierarchical_region"].append(hierarchical_region)
     point_lookup["point name"].append(point_name)
 
