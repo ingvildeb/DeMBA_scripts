@@ -114,4 +114,4 @@ for age in tqdm(key_ages[:]):
     aff = np.eye(4)
     aff[:3, :3] *= 0.02
     out = nib.Nifti1Image(output_volume, aff)
-    nib.save(out, f"new_P{age}_gene_vol_all.nii.gz")
+    nib.save(out, f"../data_files/new_P{age}_gene_vol_all.nii.gz")

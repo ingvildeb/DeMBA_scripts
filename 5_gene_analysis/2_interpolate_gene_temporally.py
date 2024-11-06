@@ -35,4 +35,4 @@ for age in KEY_AGES:
 
 volume_series = VolumeSeries(volumes)
 volume_series.interpolate_series()
-volume_series.save(output_dir="interpolated_gene/")
+volume_series.save(output_dir="../data_files/interpolated_gene/")
