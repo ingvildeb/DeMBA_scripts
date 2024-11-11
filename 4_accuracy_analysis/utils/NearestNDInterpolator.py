@@ -170,9 +170,7 @@ class NearestNDInterpolator(NDInterpolatorBase):
                     self.values[i], axis=1, weights=(1.0 / (dist**power))
                 )
             elif weights == "linear" and dist.ndim > 1:
-                interp_values = np.average(
-                    self.values[i], axis=1, weights=(1.0 / dist)
-                )
+                interp_values = np.average(self.values[i], axis=1, weights=(1.0 / dist))
             else:
                 raise ValueError(
                     "Unknown value %r passed for weights,"

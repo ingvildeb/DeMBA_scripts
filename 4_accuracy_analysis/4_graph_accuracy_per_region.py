@@ -31,11 +31,11 @@ for age in ages:
     # Filter the data to focus on the "DeMBA" column
     data = merged_df[["hierarchical_region", "Distance DeMBA to others"]]
     data = data.rename(columns={"Distance DeMBA to others": "DeMBA"})
-    data['DeMBA'] = data['DeMBA'] * 20
-    
+    data["DeMBA"] = data["DeMBA"] * 20
+
     # Group the data by hierarchical region
     grouped_data = data.groupby("hierarchical_region").mean().reset_index()
-    #convert to mictons
+    # convert to mictons
     # Define the order of hierarchical regions
     order = grouped_data["hierarchical_region"]
 
