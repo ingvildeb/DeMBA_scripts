@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from CCF_translator.deformation import apply_deformation, route_calculation
-import CCF_translator
+from brainglobe_ccf_translator.deformation import apply_deformation, route_calculation
+import brainglobe_ccf_translator
 import pandas as pd
 from tqdm import tqdm
 import scipy
@@ -98,7 +98,7 @@ for m in ["iterative"]:  # , "individual"]:
         )
         mask = np.array((top_mask_x, top_mask_y, top_mask_z)).T & bottom_mask
 
-        points = CCF_translator.PointSet(
+        points = brainglobe_CCF_translator.PointSet(
             values=mean_older_points,
             space=target_space,
             age_PND=older_age,
