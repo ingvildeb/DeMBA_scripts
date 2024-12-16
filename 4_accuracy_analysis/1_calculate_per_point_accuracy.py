@@ -98,7 +98,7 @@ for m in ["iterative"]:  # , "individual"]:
         )
         mask = np.array((top_mask_x, top_mask_y, top_mask_z)).T & bottom_mask
 
-        points = brainglobe_CCF_translator.PointSet(
+        points = brainglobe_ccf_translator.PointSet(
             values=mean_older_points,
             space=target_space,
             age_PND=older_age,
