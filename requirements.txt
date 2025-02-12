@@ -1,5 +1,5 @@
 nibabel
-ccf-translator
+brainglobe-ccf-translator
 tqdm
 opencv-python
 brainglobe_atlasapi
