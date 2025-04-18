@@ -6,7 +6,7 @@ import os
 # Usage example
 VOXEL_SIZE_MICRON = 20
 SPACE_NAME = "demba_dev_mouse"
-DATA_FOLDER = "/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v1/interpolated_templates/"
+DATA_FOLDER = "/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v2/interpolated_templates/"
 KEY_AGES = [7, 4, 14]  # [56, 28, 21, 14, 7, 4]
 
 volumes = []

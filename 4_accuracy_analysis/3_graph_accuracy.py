@@ -47,6 +47,7 @@ colour_map = {
     "Ventricular System": "#AAAAAA",
     "out of brain": "#000000",
 }
+plt.rcParams.update({'font.size': 20})  # Default is usually 10
 
 for age in ages:
 
@@ -75,7 +76,7 @@ for age in ages:
             "Rater 2": Sim,
             "Rater 3": Hei,
             "Rater 4": Har,
-            "Average of humans": mean_human,
+            "Average rater": mean_human,
             "DeMBA": Dem,
         }
     )
@@ -92,7 +93,7 @@ for age in ages:
     buffer = 50  # Add a buffer to ensure points are not cropped
 
     # Create the figure and two subplots with height ratios
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(15, 8))  # Increased width by 50% from 10 to 15
     gs = fig.add_gridspec(2, 1, height_ratios=[1, 3], hspace=0.05)
 
     ax1 = fig.add_subplot(gs[0])
@@ -131,7 +132,7 @@ for age in ages:
             ax=ax2,
             legend=False,
             edgecolor="black",  # Add hard outline
-            linewidth=0.5,  # Set the width of the outline
+            linewidth=0,  # Set the width of the outline
             clip_on=False,  # Allow points to be drawn outside the axes limits
         )
 
@@ -146,7 +147,7 @@ for age in ages:
             ax=ax1,
             legend=False,
             edgecolor="black",  # Add hard outline
-            linewidth=0.5,  # Set the width of the outline
+            linewidth=0,  # Set the width of the outline
             clip_on=False,  # Allow points to be drawn outside the axes limits
         )
 
@@ -157,7 +158,7 @@ for age in ages:
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
-            xytext=(-30, 9),  # Offset to the left
+            xytext=(-40, 9),  # Offset to the left
             textcoords="offset points",
         )
 
@@ -167,9 +168,11 @@ for age in ages:
             (p.get_x() + p.get_width() / 2.0, p.get_height()),
             ha="center",
             va="center",
-            xytext=(-30, 9),  # Offset to the left
+            xytext=(-40, 9),  # Offset to the left
             textcoords="offset points",
         )
+
+
     # Annotate the plot with the p-value and significance
     significance = (
         "ns"
@@ -210,21 +213,33 @@ for age in ages:
     if lower_threshold not in y_ticks_bottom:
         y_ticks_bottom.append(lower_threshold)
     ax2.set_yticks(y_ticks_bottom)
-    y_ticks_top = np.arange(lower_threshold, upper_threshold + buffer + 1000, 1000)
+    y_ticks_top = np.arange(lower_threshold, upper_threshold + buffer + 1000, 2000)
     ax1.set_yticks(y_ticks_top)
     # Customize the plot
-    ax1.set_title(f"{age} Mean Error")
+    # ax1.set_title(f"{age} Mean Error")
     # ax2.set_xlabel("Individuals")
     ax1.set_ylabel("")
     ax2.set_ylabel("")
+    ax1.set_ylabel("")
+    ax2.set_ylabel("")
+
+    # Move ticks and labels to right side
+    ax1.yaxis.set_label_position('right')
+    ax1.yaxis.tick_right()
+    ax2.yaxis.set_label_position('right') 
+    ax2.yaxis.tick_right()
+    # Move the shared y-axis label to the right
     # Add a centered y-axis label
+    # 
     fig.text(
-        0.04,
+        0.96,  # Move from 0.04 to 0.96 to place on right
         0.5,
         "Distance to median of others (microns)",
-        va="center",
-        rotation="vertical",
+        va="center", 
+        rotation=270  # Change rotation to 270 for right-side alignment
     )
+
+
     # Save the plot as an SVG file
     plt.savefig(f"{datapath}/two_scale_plot_{age}.svg", format="svg")
     plt.show()

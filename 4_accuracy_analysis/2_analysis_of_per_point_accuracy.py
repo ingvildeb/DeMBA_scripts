@@ -35,7 +35,7 @@ key_ages = [56, 28, 21, 14, 7, 4]
 for age in key_ages:
     points = pd.read_csv(rf"demo_data/individual_P{age}.csv")
     annotation = nib.load(
-        rf"/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v1/interpolated_segmentations/AllenCCFv3_segmentations/DeMBA_P{age}_segmentation_2022.nii.gz"
+        rf"/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v2/interpolated_segmentations/AllenCCFv3_segmentations/DeMBA_P{age}_segmentation_2022.nii.gz"
     )
     annotation_vol = np.asanyarray(annotation.dataobj)
     distances = points[
@@ -82,7 +82,7 @@ for age in key_ages:
 for age in key_ages:
     points = pd.read_csv(rf"demo_data/individual_P{age}.csv")
     annotation = nib.load(
-        rf"/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v1/interpolated_segmentations/AllenCCFv3_segmentations/DeMBA_P{age}_segmentation_2022.nii.gz"
+        rf"/mnt/z/HBP_Atlasing/Developmental_atlases/DeMBA_Developmental mouse brain atlas/DeMBA-v1/01_working-environment/01_Data/DeMBA_v2/interpolated_segmentations/AllenCCFv3_segmentations/DeMBA_P{age}_segmentation_2022.nii.gz"
     )
     annotation_vol = np.asanyarray(annotation.dataobj)
     distances = points[["Distance Ingvild to Heidi"]]
@@ -113,4 +113,4 @@ for age in key_ages:
     volume = interpolate_volume(volume, annotation_vol != 0)
     out_img = nib.Nifti1Image(volume, annotation.affine, annotation.header)
     nib.save(out_img, f"demo_data/heidi_ingvild_{age}_error_volume.nii.gz")
-    break
+    

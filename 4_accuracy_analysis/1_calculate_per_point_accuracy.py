@@ -7,13 +7,13 @@ from tqdm import tqdm
 import scipy
 
 key_ages = [56, 28, 21, 14, 7, 4]
-points_dataset_h = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Heidi.xlsx")
-points_dataset_i = pd.read_excel(
-    r"../data_files/DeMBA_landmarksValidation_Ingvild.xlsx"
+points_dataset_rat3 = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Rater_3.xlsx")
+points_dataset_rat1 = pd.read_excel(
+    r"../data_files/DeMBA_landmarksValidation_Rater_1.xlsx"
 )
-points_dataset_s = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Simon.xlsx")
-points_dataset_r = pd.read_excel(
-    r"../data_files/DeMBA_landmarksValidation_Harry.xlsx"
+points_dataset_rat2 = pd.read_excel(r"../data_files/DeMBA_landmarksValidation_Rater_2.xlsx")
+points_dataset_rat4 = pd.read_excel(
+    r"../data_files/DeMBA_landmarksValidation_Rater_3.xlsx"
 )  # Harry's data
 
 keep_names = points_dataset_r["Full name"][points_dataset_r["Remove"] != 1]
