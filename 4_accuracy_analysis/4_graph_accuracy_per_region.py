@@ -22,7 +22,7 @@ colour_map = {
     "Fibre Tracts": "#CCCCCC",
     "Ventricular System": "#AAAAAA",
     "out of brain": "#000000",
-} 
+}
 for age in ages:
     # Read the CSV file into a DataFrame
     df = pd.read_csv(f"{datapath}/iterative_{age}.csv")
@@ -33,9 +33,11 @@ for age in ages:
     data = data.rename(columns={"Distance DeMBA to others": "DeMBA"})
     data['DeMBA'] = data['DeMBA'] * 20
     print(data['DeMBA'].max())
+    data["DeMBA"] = data["DeMBA"] * 20
+
     # Group the data by hierarchical region
     grouped_data = data.groupby("hierarchical_region").mean().reset_index()
-    #convert to mictons
+    # convert to mictons
     # Define the order of hierarchical regions
     order = colour_map.keys()
 

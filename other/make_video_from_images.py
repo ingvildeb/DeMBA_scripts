@@ -20,10 +20,13 @@ This code makes videos out of ITK-snap screenshots.
 """
 
 
-img_path = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\02_Figures\Videos\screenshot_itksnap\\"
+img_paths = [r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\02_Figures\Videos\screenshot_itksnap\\",
+             r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\02_Figures\Videos\calb1_screenshots\\"]
 
+img_types = ["template", "calb1"]
 
-list_of_images = glob.glob(f"{img_path}*.png")
+out_path = r"Z:\HBP_Atlasing\Developmental_atlases\DeMBA_Developmental mouse brain atlas\DeMBA-v1\01_working-environment\02_Figures\Videos\\"
+
 
 
 def resize_with_padding(img, expected_size):
@@ -46,66 +49,75 @@ def resize_with_padding(img, expected_size):
 size = 750, 750
 views = ["Volumetric", "Horizontal", "Coronal", "Sagittal"]
 
-# Opens a image in RGB mode
-for view in views:
-    img_array = []
 
-    for image in list_of_images:
-        im = Image.open(image)
-
-        # Setting the points for cropped image
-        if view == "Volumetric":
-            left = 400
-            top = 730
-            right = 1300
-            bottom = 1300
-        elif view == "Horizontal":
-            left = 197
-            top = 53
-            right = 1344
-            bottom = 690
-        elif view == "Coronal":
-            left = 1392
-            top = 60
-            right = 2520
-            bottom = 689
-        elif view == "Sagittal":
-            left = 1380
-            top = 729
-            right = 2524
-            bottom = 1358
-
-        # Cropped the image and pad to selected dimensions
-        im1 = im.crop((left, top, right, bottom))
-        im1 = resize_with_padding(im1, (size))
-        im1 = im1.crop((0, 100, 750, 750))
-
-        # Append all images to array
-        img_array.append(np.array(im1))
-
-    list_of_ages = list(range(4, 57))
-    out = cv2.VideoWriter(
-        f"video_volume_{view}.mp4", cv2.VideoWriter_fourcc(*"MP4V"), 6, im1.size
-    )
-
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    org = (50, 500)
-    org2 = (500, 500)
-    fontScale = 1
-    color = (255, 255, 255)  # BGR
-    thickness = 2
-
-    with_text = []
-    for i, j in zip(img_array, list_of_ages):
-        img_text = cv2.putText(
-            i, f"Postnatal day {j}", org, font, fontScale, color, thickness, cv2.LINE_AA
+for img_path, img_type in zip(img_paths, img_types):
+    
+    list_of_images = glob.glob(f"{img_path}*.png")
+    
+    for view in views:
+        img_array = []
+        list_of_ages = list(range(4, 57))
+    
+        for image, age in zip(list_of_images, list_of_ages):
+            im = Image.open(image)
+            
+            # Setting the points for cropped image
+            if view == "Volumetric":
+                left = 400
+                top = 730
+                right = 1300
+                bottom = 1300
+            elif view == "Horizontal":
+                left = 197
+                top = 53
+                right = 1344
+                bottom = 690
+            elif view == "Coronal":
+                left = 1392
+                top = 60
+                right = 2520
+                bottom = 689
+            elif view == "Sagittal":
+                left = 1380
+                top = 729
+                right = 2524
+                bottom = 1358
+    
+            # Cropped the image and pad to selected dimensions
+            im1 = im.crop((left, top, right, bottom))
+            im1 = resize_with_padding(im1, (size))
+            im1 = im1.crop((0, 100, 750, 750))
+    
+            # Append all images to array
+            img_array.append(np.array(im1))
+            
+            # Save the image
+            im1.save(f"{out_path}cropped_images\{img_type}\{view}\\P{age}_{img_type}_{view}.png")
+            
+    
+        
+        out = cv2.VideoWriter(
+            f"{out_path}compiled_videos\\video_{img_type}_{view}.mp4", cv2.VideoWriter_fourcc(*"MP4V"), 4, im1.size
         )
-        img_text = cv2.putText(
-            i, f"{view} view", org2, font, fontScale, color, thickness, cv2.LINE_AA
-        )
-        with_text.append(img_text)
-
-    for i in img_array:
-        out.write(cv2.cvtColor(i, cv2.COLOR_RGB2BGR))
-
-    out.release()
+    
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        org = (50, 500)
+        org2 = (500, 500)
+        fontScale = 1
+        color = (255, 255, 255)  # BGR
+        thickness = 2
+    
+        with_text = []
+        for i, j in zip(img_array, list_of_ages):
+            img_text = cv2.putText(
+                i, f"Postnatal day {j}", org, font, fontScale, color, thickness, cv2.LINE_AA
+            )
+            img_text = cv2.putText(
+                i, f"{view} view", org2, font, fontScale, color, thickness, cv2.LINE_AA
+            )
+            with_text.append(img_text)
+    
+        for i in img_array:
+            out.write(cv2.cvtColor(i, cv2.COLOR_RGB2BGR))
+    
+        out.release()
