@@ -48,7 +48,20 @@ colour_map = {
     "out of brain": "#000000",
 }
 plt.rcParams.update({'font.size': 20})  # Default is usually 10
-
+statistics_table = {
+    'age' : [],
+    'mean DeMBA error' : [],
+    'standard deviation of DeMBA error' : [],
+    'mean human error' : [],
+    'standard deviation of mean human error' : [],
+    't statistic' : [],
+    'p value' : [],
+    'mean difference': [],
+    '95% CI high': [],
+    '95% CI low' : [] ,
+    'cohens d' : [],
+    'degrees of freedom' : [],
+}
 for age in ages:
 
     # Read the CSV file into a DataFrame
@@ -82,10 +95,32 @@ for age in ages:
     )
     # convert the data from voxels to microns
     data = data * 20
-
+    Dem = Dem * 20
+    mean_human = mean_human * 20
     # Perform paired samples t-test
     nans = np.isnan(mean_human) | np.isnan(Dem)
-    t_stat, p_value = ttest_rel(mean_human[~nans], Dem[~nans])
+    result = ttest_rel(mean_human[~nans], Dem[~nans])
+    mean_difference = (mean_human[~nans] - Dem[~nans]).mean()
+    statistics_table['mean human error'].append(mean_human[~nans].mean())
+    statistics_table['mean DeMBA error'].append(Dem[~nans].mean())
+    statistics_table['standard deviation of mean human error'].append(mean_human[~nans].std())
+    statistics_table['standard deviation of DeMBA error'].append(Dem[~nans].std())
+    Dem[~nans].mean()
+    statistics_table['mean difference'].append(mean_difference)
+    t_stat, p_value = result
+    dof = result.df
+    l95, h95 = result.confidence_interval(0.95)
+    # ← ADD PAIRWISE EFFECT SIZE (Cohen's d)
+    diffs = mean_human[~nans] - Dem[~nans]
+    cohen_d = np.mean(diffs) / np.std(diffs, ddof=1)
+
+    statistics_table['age'].append(age)
+    statistics_table['t statistic'].append(t_stat)
+    statistics_table['p value'].append(p_value)
+    statistics_table['95% CI high'].append(h95)
+    statistics_table['95% CI low'].append(l95)
+    statistics_table['cohens d'].append(cohen_d)
+    statistics_table['degrees of freedom'].append(dof)
 
     # Define the thresholds for the broken axis
     lower_threshold = 650
@@ -226,16 +261,16 @@ for age in ages:
     # Move ticks and labels to right side
     ax1.yaxis.set_label_position('right')
     ax1.yaxis.tick_right()
-    ax2.yaxis.set_label_position('right') 
+    ax2.yaxis.set_label_position('right')
     ax2.yaxis.tick_right()
     # Move the shared y-axis label to the right
     # Add a centered y-axis label
-    # 
+    #
     fig.text(
         0.96,  # Move from 0.04 to 0.96 to place on right
         0.5,
         "Distance to median of others (microns)",
-        va="center", 
+        va="center",
         rotation=270  # Change rotation to 270 for right-side alignment
     )
 
@@ -256,3 +291,27 @@ ax_legend.legend(handles, labels, loc="center")
 ax_legend.axis("off")
 plt.savefig(f"{datapath}/legend_plot.svg", format="svg")
 plt.show()
+
+df_stats = pd.DataFrame(statistics_table)
+
+cols = [
+    "age",
+    "mean DeMBA error",
+    "standard deviation of DeMBA error",
+    "mean human error",
+    "standard deviation of mean human error",
+    "t statistic",
+    "p value",
+    'mean difference',
+    "95% CI low",
+    "95% CI high",
+    "cohens d",
+    "degrees of freedom",
+]
+df_stats = df_stats[cols]
+df_stats.loc[:, cols[1:]] = df_stats.loc[:, cols[1:]].round(2)
+
+print(df_stats.to_markdown(index=False))
+
+df_stats.sort_values('age').to_csv(f"{datapath}/statistics_summary.csv", index=False)
+
