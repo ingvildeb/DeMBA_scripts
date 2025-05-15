@@ -1,0 +1,6 @@
+age,mean DeMBA error,standard deviation of DeMBA error,mean human error,standard deviation of mean human error,t statistic,p value,mean difference,95% CI low,95% CI high,cohens d,degrees of freedom
+P04,182.0,112.89,201.8,117.84,0.82,0.42,19.79,-28.7,68.29,0.11,50
+P07,185.27,115.11,220.27,169.48,1.59,0.12,35.0,-9.26,79.25,0.22,52
+P14,160.0,93.93,160.63,127.11,0.04,0.97,0.63,-35.56,36.83,0.0,52
+P21,148.85,84.67,182.36,177.66,1.41,0.16,33.51,-14.16,81.18,0.19,52
+P28,103.31,54.17,144.46,169.76,1.78,0.08,41.15,-5.29,87.59,0.24,52
